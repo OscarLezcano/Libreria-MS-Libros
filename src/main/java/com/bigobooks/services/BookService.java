@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,8 +36,8 @@ public class BookService extends BaseService<Book, BookRepository> {
     }
 
     @Transactional(readOnly = true)
-    public List<BookDto> getAll() {
-        return bookMapper.toDtoList(findAll());
+    public Page<BookDto> getAll(Pageable pageable) {
+        return getRepository().findAll(pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -49,21 +51,21 @@ public class BookService extends BaseService<Book, BookRepository> {
     }
 
     @Transactional(readOnly = true)
-    public List<BookDto> search(String title) {
+    public Page<BookDto> search(String title, Pageable pageable) {
         if (!StringUtils.hasText(title)) {
-            return getAll();
+            return getAll(pageable);
         }
-        return bookMapper.toDtoList(getRepository().searchByTitle(title.trim()));
+        return getRepository().searchByTitle(title.trim(), pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<BookDto> getByGenre(Long genreId) {
-        return bookMapper.toDtoList(getRepository().findByGenres_Id(genreId));
+    public Page<BookDto> getByGenre(Long genreId, Pageable pageable) {
+        return getRepository().findByGenres_Id(genreId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<BookDto> getByAuthor(Long authorId) {
-        return bookMapper.toDtoList(getRepository().findByAuthors_Id(authorId));
+    public Page<BookDto> getByAuthor(Long authorId, Pageable pageable) {
+        return getRepository().findByAuthors_Id(authorId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional

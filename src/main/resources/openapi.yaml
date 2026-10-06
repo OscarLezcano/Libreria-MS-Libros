@@ -1,0 +1,838 @@
+# cSpell:disable
+openapi: 3.0.3
+info:
+  title: BigoBooks Stock API
+  version: 1.0.0
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      operationId: getBooks
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookDto'
+    post:
+      tags:
+        - Books
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDto'
+      responses:
+        '201':
+          description: Book created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDto'
+  /books/{id}:
+    get:
+      tags:
+        - Books
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Book found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDto'
+        '404':
+          description: Book not found
+    put:
+      tags:
+        - Books
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDto'
+      responses:
+        '200':
+          description: Book updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDto'
+        '404':
+          description: Book not found
+    delete:
+      tags:
+        - Books
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Book deleted
+  /books/genre/{genreId}:
+    get:
+      tags:
+        - Books
+      operationId: getBooksByGenre
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookDto'
+  /books/author/{authorId}:
+    get:
+      tags:
+        - Books
+      operationId: getBooksByAuthor
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookDto'
+  /genres:
+    get:
+      tags:
+        - Genres
+      operationId: getGenres
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Genres found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GenreDto'
+    post:
+      tags:
+        - Genres
+      operationId: createGenre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreDto'
+      responses:
+        '201':
+          description: Genre created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreDto'
+  /genres/{id}:
+    get:
+      tags:
+        - Genres
+      operationId: getGenreById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Genre found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreDto'
+        '404':
+          description: Genre not found
+    put:
+      tags:
+        - Genres
+      operationId: updateGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenreDto'
+      responses:
+        '200':
+          description: Genre updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreDto'
+        '404':
+          description: Genre not found
+    delete:
+      tags:
+        - Genres
+      operationId: deleteGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Genre deleted
+  /authors:
+    get:
+      tags:
+        - Authors
+      operationId: getAuthors
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Authors found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorDto'
+    post:
+      tags:
+        - Authors
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorDto'
+      responses:
+        '201':
+          description: Author created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorDto'
+  /authors/{id}:
+    get:
+      tags:
+        - Authors
+      operationId: getAuthorById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Author found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorDto'
+        '404':
+          description: Author not found
+    put:
+      tags:
+        - Authors
+      operationId: updateAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorDto'
+      responses:
+        '200':
+          description: Author updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorDto'
+        '404':
+          description: Author not found
+    delete:
+      tags:
+        - Authors
+      operationId: deleteAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Author deleted
+  /warehouses:
+    get:
+      tags:
+        - Warehouses
+      operationId: getWarehouses
+      parameters:
+        - name: city
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Warehouses found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseDto'
+    post:
+      tags:
+        - Warehouses
+      operationId: createWarehouse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseDto'
+      responses:
+        '201':
+          description: Warehouse created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+  /warehouses/{id}:
+    get:
+      tags:
+        - Warehouses
+      operationId: getWarehouseById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Warehouse found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+        '404':
+          description: Warehouse not found
+    put:
+      tags:
+        - Warehouses
+      operationId: updateWarehouse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseDto'
+      responses:
+        '200':
+          description: Warehouse updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+        '404':
+          description: Warehouse not found
+    delete:
+      tags:
+        - Warehouses
+      operationId: deleteWarehouse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Warehouse deleted
+  /stocks/warehouse/{warehouseId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStocksByWarehouse
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stocks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockDto'
+  /stocks/book/{bookId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStocksByBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stocks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockDto'
+  /stocks/warehouse/{warehouseId}/book/{bookId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStock
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockDto'
+        '404':
+          description: Stock not found
+  /stocks/warehouse/{warehouseId}/book/{bookId}/quantity:
+    post:
+      tags:
+        - Stocks
+      operationId: setStockQuantity
+      description: Adds quantity to the stock (negative values subtract)
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockQuantityRequestDto'
+      responses:
+        '200':
+          description: Stock set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockDto'
+        '404':
+          description: Warehouse not found
+  /stock-adjustments/{id}:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock adjustment found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAdjustmentDto'
+        '404':
+          description: Stock adjustment not found
+  /stock-adjustments/warehouse/{warehouseId}:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentsByWarehouse
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stock adjustments found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockAdjustmentDto'
+    post:
+      tags:
+        - StockAdjustments
+      operationId: createStockAdjustment
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockAdjustmentDto'
+      responses:
+        '201':
+          description: Stock adjustment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAdjustmentDto'
+        '400':
+          description: Invalid stock adjustment
+components:
+  schemas:
+    BookDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        coverUrl:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        genreIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+        authorIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    GenreDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AuthorDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    WarehouseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        phone:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    StockDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        warehouse:
+          $ref: '#/components/schemas/WarehouseDto'
+    StockAdjustmentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockAdjustmentDetailDto'
+    StockAdjustmentDetailDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        book:
+          type: integer
+          format: int64
+        bookName:
+          type: string
+        systemQuantity:
+          type: integer
+        physicalQuantity:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    StockQuantityRequestDto:
+      type: object
+      required:
+        - quantity
+      properties:
+        quantity:
+          type: integer

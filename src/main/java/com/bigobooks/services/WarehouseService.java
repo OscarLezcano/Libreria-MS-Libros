@@ -1,8 +1,9 @@
 package com.bigobooks.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -24,8 +25,8 @@ public class WarehouseService extends BaseService<Warehouse, WarehouseRepository
     }
 
     @Transactional(readOnly = true)
-    public List<WarehouseDto> getAll() {
-        return warehouseMapper.toDtoList(findAll());
+    public Page<WarehouseDto> getAll(Pageable pageable) {
+        return getRepository().findAll(pageable).map(warehouseMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -39,11 +40,11 @@ public class WarehouseService extends BaseService<Warehouse, WarehouseRepository
     }
 
     @Transactional(readOnly = true)
-    public List<WarehouseDto> findByCity(String city) {
+    public Page<WarehouseDto> findByCity(String city, Pageable pageable) {
         if (!StringUtils.hasText(city)) {
-            return getAll();
+            return getAll(pageable);
         }
-        return warehouseMapper.toDtoList(getRepository().findByCity(city.trim()));
+        return getRepository().findByCity(city.trim(), pageable).map(warehouseMapper::toDto);
     }
 
     @Transactional

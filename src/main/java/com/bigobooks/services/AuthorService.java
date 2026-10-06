@@ -1,8 +1,9 @@
 package com.bigobooks.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -24,8 +25,8 @@ public class AuthorService extends BaseService<Author, AuthorRepository> {
     }
 
     @Transactional(readOnly = true)
-    public List<AuthorDto> getAll() {
-        return authorMapper.toDtoList(findAll());
+    public Page<AuthorDto> getAll(Pageable pageable) {
+        return getRepository().findAll(pageable).map(authorMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -39,11 +40,11 @@ public class AuthorService extends BaseService<Author, AuthorRepository> {
     }
 
     @Transactional(readOnly = true)
-    public List<AuthorDto> search(String name) {
+    public Page<AuthorDto> search(String name, Pageable pageable) {
         if (!StringUtils.hasText(name)) {
-            return getAll();
+            return getAll(pageable);
         }
-        return authorMapper.toDtoList(getRepository().findByNameContainingIgnoreCase(name));
+        return getRepository().findByNameContainingIgnoreCase(name, pageable).map(authorMapper::toDto);
     }
 
     @Transactional

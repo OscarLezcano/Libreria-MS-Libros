@@ -1,8 +1,9 @@
 package com.bigobooks.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +29,13 @@ public class StockService extends BaseService<Stock, StockRepository> {
     }
 
     @Transactional(readOnly = true)
-    public List<StockDto> getByWarehouse(Long warehouseId) {
-        return stockMapper.toDtoList(getRepository().findByWarehouse_Id(warehouseId));
+    public Page<StockDto> getByWarehouse(Long warehouseId, Pageable pageable) {
+        return getRepository().findByWarehouse_Id(warehouseId, pageable).map(stockMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<StockDto> getByBook(Long bookId) {
-        return stockMapper.toDtoList(getRepository().findByBookId(bookId));
+    public Page<StockDto> getByBook(Long bookId, Pageable pageable) {
+        return getRepository().findByBookId(bookId, pageable).map(stockMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -69,6 +70,23 @@ public class StockService extends BaseService<Stock, StockRepository> {
             stock.setWarehouse(warehouse.get());
         }
         stock.setQuantity(quantity);
+        return Optional.of(stockMapper.toDto(save(stock)));
+    }
+
+    @Transactional
+    public Optional<StockDto> changeQuantity(Long warehouseId, Long bookId, int delta) {
+        Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
+        if (warehouse.isEmpty()) {
+            return Optional.empty();
+        }
+        Stock stock = getRepository().findForUpdateByBookIdAndWarehouseId(bookId, warehouseId).orElseGet(Stock::new);
+        if (stock.getId() == null) {
+            stock.setBookId(bookId);
+            stock.setWarehouse(warehouse.get());
+            stock.setQuantity(delta);
+        } else {
+            stock.setQuantity(stock.getQuantity() + delta);
+        }
         return Optional.of(stockMapper.toDto(save(stock)));
     }
 

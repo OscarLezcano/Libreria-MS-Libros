@@ -3,6 +3,8 @@ package com.bigobooks.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,9 +18,9 @@ public interface StockRepository extends BaseRepository<Stock> {
 
     Optional<Stock> findByBookIdAndWarehouse_Id(Long bookId, Long warehouseId);
 
-    List<Stock> findByBookId(Long bookId);
+    Page<Stock> findByBookId(Long bookId, Pageable pageable);
 
-    List<Stock> findByWarehouse_Id(Long warehouseId);
+    Page<Stock> findByWarehouse_Id(Long warehouseId, Pageable pageable);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from Stock s where s.bookId = :bookId and s.warehouse.id = :warehouseId")

@@ -9,7 +9,7 @@ import org.mapstruct.MappingTarget;
 import com.bigobooks.dto.WarehouseDto;
 import com.bigobooks.entities.stock.Warehouse;
 
-@Mapper(componentModel = "spring", uses = StockMapper.class)
+@Mapper(componentModel = "spring")
 public interface WarehouseMapper {
 
     WarehouseDto toDto(Warehouse warehouse);
@@ -19,6 +19,5 @@ public interface WarehouseMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "stocks", ignore = true)
     void update(WarehouseDto dto, @MappingTarget Warehouse warehouse);
 }

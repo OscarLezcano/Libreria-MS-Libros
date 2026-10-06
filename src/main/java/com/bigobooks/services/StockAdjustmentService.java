@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,8 @@ public class StockAdjustmentService extends BaseService<StockAdjustment, StockAd
     }
 
     @Transactional(readOnly = true)
-    public List<StockAdjustmentDto> getAll() {
-        return stockAdjustmentMapper.toDtoList(findAll());
+    public Page<StockAdjustmentDto> getAll(Pageable pageable) {
+        return getRepository().findAll(pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -52,18 +54,18 @@ public class StockAdjustmentService extends BaseService<StockAdjustment, StockAd
     }
 
     @Transactional(readOnly = true)
-    public List<StockAdjustmentDto> getByWarehouse(Long warehouseId) {
-        return stockAdjustmentMapper.toDtoList(getRepository().findByWarehouse_Id(warehouseId));
+    public Page<StockAdjustmentDto> getByWarehouse(Long warehouseId, Pageable pageable) {
+        return getRepository().findByWarehouse_Id(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<StockAdjustmentDto> getByBook(Long bookId) {
-        return stockAdjustmentMapper.toDtoList(getRepository().findByDetails_Book(bookId));
+    public Page<StockAdjustmentDto> getByBook(Long bookId, Pageable pageable) {
+        return getRepository().findByDetails_Book(bookId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional
-    public Optional<StockAdjustmentDto> create(StockAdjustmentDto dto) {
-        Optional<Warehouse> warehouse = warehouseRepository.findById(dto.getWarehouseId());
+    public Optional<StockAdjustmentDto> create(Long warehouseId, StockAdjustmentDto dto) {
+        Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
         if (warehouse.isEmpty() || dto.getDetails() == null || dto.getDetails().isEmpty()) {
             return Optional.empty();
         }

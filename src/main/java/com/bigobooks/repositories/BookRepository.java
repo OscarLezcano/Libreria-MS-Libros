@@ -3,6 +3,8 @@ package com.bigobooks.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,12 +15,12 @@ public interface BookRepository extends BaseRepository<Book> {
 
     Optional<Book> findByTitle(String title);
 
-    List<Book> findByGenres_Id(Long genreId);
+    Page<Book> findByGenres_Id(Long genreId, Pageable pageable);
 
-    List<Book> findByAuthors_Id(Long authorId);
+    Page<Book> findByAuthors_Id(Long authorId, Pageable pageable);
 
     @Query("select b from Book b where lower(b.title) like lower(concat('%', :title, '%'))")
-    List<Book> searchByTitle(@Param("title") String title);
+    Page<Book> searchByTitle(@Param("title") String title, Pageable pageable);
 
     @Query(value = "SELECT * FROM book WHERE is_deleted = true", nativeQuery = true)
     List<Book> findDeleted();

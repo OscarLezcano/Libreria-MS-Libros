@@ -12,7 +12,6 @@ import com.bigobooks.entities.stock.StockAdjustmentDetail;
 @Mapper(componentModel = "spring")
 public interface StockAdjustmentDetailMapper {
 
-    @Mapping(source = "stockAdjustment.id", target = "stockAdjustmentId")
     StockAdjustmentDetailDto toDto(StockAdjustmentDetail detail);
 
     List<StockAdjustmentDetailDto> toDtoList(List<StockAdjustmentDetail> details);
