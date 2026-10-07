@@ -1,8 +1,8 @@
 package com.bigobooks.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.AuthorDto;
+import com.bigobooks.dto.Envelope;
 import com.bigobooks.services.AuthorService;
+import com.bigobooks.util.Envelopes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,26 +29,27 @@ public class AuthorController implements AuthorsApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<List<AuthorDto>> getAuthors(String name, Integer page, Integer size) {
-        return ResponseEntity.ok(authorService.search(name, pageable(page, size)).getContent());
+    public ResponseEntity<Envelope> getAuthors(String name, Integer page, Integer size) {
+        Page<AuthorDto> result = authorService.search(name, pageable(page, size));
+        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
     }
 
     @Override
-    public ResponseEntity<AuthorDto> getAuthorById(Long id) {
+    public ResponseEntity<Envelope> getAuthorById(Long id) {
         return authorService.getById(id)
-                .map(ResponseEntity::ok)
+                .map(author -> ResponseEntity.ok(Envelopes.single(author)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<AuthorDto> createAuthor(AuthorDto authorDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorService.create(authorDto));
+    public ResponseEntity<Envelope> createAuthor(AuthorDto authorDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(authorService.create(authorDto)));
     }
 
     @Override
-    public ResponseEntity<AuthorDto> updateAuthor(Long id, AuthorDto authorDto) {
+    public ResponseEntity<Envelope> updateAuthor(Long id, AuthorDto authorDto) {
         return authorService.update(id, authorDto)
-                .map(ResponseEntity::ok)
+                .map(author -> ResponseEntity.ok(Envelopes.single(author)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

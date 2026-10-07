@@ -122,6 +122,7 @@
 								<hideGenerationTimestamp>true</hideGenerationTimestamp>
 								<dateLibrary>java8</dateLibrary>
 								<useOptional>false</useOptional>
+								<useGenericResponse>true</useGenericResponse>
 								<bigDecimalAsString>true</bigDecimalAsString>
 								<generateJsonIncludeAnnotations>false</generateJsonIncludeAnnotations>
 								<generateJsonSetterNullsAnnotations>false</generateJsonSetterNullsAnnotations>

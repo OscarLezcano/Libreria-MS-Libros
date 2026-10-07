@@ -1,16 +1,18 @@
 package com.bigobooks.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigobooks.dto.Envelope;
 import com.bigobooks.dto.WarehouseDto;
 import com.bigobooks.services.WarehouseService;
+import com.bigobooks.util.Envelopes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,26 +29,27 @@ public class WarehouseController implements WarehousesApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<List<WarehouseDto>> getWarehouses(String city, Integer page, Integer size) {
-        return ResponseEntity.ok(warehouseService.findByCity(city, pageable(page, size)).getContent());
+    public ResponseEntity<Envelope> getWarehouses(String city, Integer page, Integer size) {
+        Page<WarehouseDto> result = warehouseService.findByCity(city, pageable(page, size));
+        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
     }
 
     @Override
-    public ResponseEntity<WarehouseDto> getWarehouseById(Long id) {
+    public ResponseEntity<Envelope> getWarehouseById(Long id) {
         return warehouseService.getById(id)
-                .map(ResponseEntity::ok)
+                .map(warehouse -> ResponseEntity.ok(Envelopes.single(warehouse)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<WarehouseDto> createWarehouse(WarehouseDto warehouseDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(warehouseService.create(warehouseDto));
+    public ResponseEntity<Envelope> createWarehouse(WarehouseDto warehouseDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(warehouseService.create(warehouseDto)));
     }
 
     @Override
-    public ResponseEntity<WarehouseDto> updateWarehouse(Long id, WarehouseDto warehouseDto) {
+    public ResponseEntity<Envelope> updateWarehouse(Long id, WarehouseDto warehouseDto) {
         return warehouseService.update(id, warehouseDto)
-                .map(ResponseEntity::ok)
+                .map(warehouse -> ResponseEntity.ok(Envelopes.single(warehouse)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

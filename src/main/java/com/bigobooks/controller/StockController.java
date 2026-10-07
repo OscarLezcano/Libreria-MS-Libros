@@ -1,16 +1,18 @@
 package com.bigobooks.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigobooks.dto.Envelope;
 import com.bigobooks.dto.StockDto;
 import com.bigobooks.dto.StockQuantityRequestDto;
 import com.bigobooks.services.StockService;
+import com.bigobooks.util.Envelopes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,27 +29,29 @@ public class StockController implements StocksApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<List<StockDto>> getStocksByWarehouse(Long warehouseId, Integer page, Integer size) {
-        return ResponseEntity.ok(stockService.getByWarehouse(warehouseId, pageable(page, size)).getContent());
+    public ResponseEntity<Envelope> getStocksByWarehouse(Long warehouseId, Integer page, Integer size) {
+        Page<StockDto> result = stockService.getByWarehouse(warehouseId, pageable(page, size));
+        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
     }
 
     @Override
-    public ResponseEntity<List<StockDto>> getStocksByBook(Long bookId, Integer page, Integer size) {
-        return ResponseEntity.ok(stockService.getByBook(bookId, pageable(page, size)).getContent());
+    public ResponseEntity<Envelope> getStocksByBook(Long bookId, Integer page, Integer size) {
+        Page<StockDto> result = stockService.getByBook(bookId, pageable(page, size));
+        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
     }
 
     @Override
-    public ResponseEntity<StockDto> getStock(Long warehouseId, Long bookId) {
+    public ResponseEntity<Envelope> getStock(Long warehouseId, Long bookId) {
         return stockService.getStock(warehouseId, bookId)
-                .map(ResponseEntity::ok)
+                .map(stock -> ResponseEntity.ok(Envelopes.single(stock)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<StockDto> setStockQuantity(Long warehouseId, Long bookId,
+    public ResponseEntity<Envelope> setStockQuantity(Long warehouseId, Long bookId,
             StockQuantityRequestDto stockQuantityRequestDto) {
         return stockService.changeQuantity(warehouseId, bookId, stockQuantityRequestDto.getQuantity())
-                .map(ResponseEntity::ok)
+                .map(stock -> ResponseEntity.ok(Envelopes.single(stock)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

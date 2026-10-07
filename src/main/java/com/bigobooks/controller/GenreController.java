@@ -1,16 +1,18 @@
 package com.bigobooks.controller;
 
 import org.springframework.beans.factory.annotation.Value;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigobooks.dto.Envelope;
 import com.bigobooks.dto.GenreDto;
 import com.bigobooks.services.GenreService;
+import com.bigobooks.util.Envelopes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,26 +29,27 @@ public class GenreController implements GenresApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<List<GenreDto>> getGenres(String name, Integer page, Integer size) {
-        return ResponseEntity.ok(genreService.search(name, pageable(page, size)).getContent());
+    public ResponseEntity<Envelope> getGenres(String name, Integer page, Integer size) {
+        Page<GenreDto> result = genreService.search(name, pageable(page, size));
+        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
     }
 
     @Override
-    public ResponseEntity<GenreDto> getGenreById(Long id) {
+    public ResponseEntity<Envelope> getGenreById(Long id) {
         return genreService.getById(id)
-                .map(ResponseEntity::ok)
+                .map(genre -> ResponseEntity.ok(Envelopes.single(genre)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<GenreDto> createGenre(GenreDto genreDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(genreService.create(genreDto));
+    public ResponseEntity<Envelope> createGenre(GenreDto genreDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(genreService.create(genreDto)));
     }
 
     @Override
-    public ResponseEntity<GenreDto> updateGenre(Long id, GenreDto genreDto) {
+    public ResponseEntity<Envelope> updateGenre(Long id, GenreDto genreDto) {
         return genreService.update(id, genreDto)
-                .map(ResponseEntity::ok)
+                .map(genre -> ResponseEntity.ok(Envelopes.single(genre)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
