@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bigobooks.dto.Envelope;
 import com.bigobooks.dto.StockAdjustmentDto;
+import com.bigobooks.dto.StockAdjustmentListResponse;
+import com.bigobooks.dto.StockAdjustmentResponse;
 import com.bigobooks.services.StockAdjustmentService;
 import com.bigobooks.util.Envelopes;
 
@@ -29,23 +30,25 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<Envelope> getStockAdjustmentById(Long id) {
+    public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
         return stockAdjustmentService.getById(id)
-                .map(adjustment -> ResponseEntity.ok(Envelopes.single(adjustment)))
+                .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<Envelope> getStockAdjustmentsByWarehouse(Long warehouseId, Integer page,
+    public ResponseEntity<StockAdjustmentListResponse> getStockAdjustmentsByWarehouse(Long warehouseId, Integer page,
             Integer size) {
         Page<StockAdjustmentDto> result = stockAdjustmentService.getByWarehouse(warehouseId, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new StockAdjustmentListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> createStockAdjustment(Long warehouseId, StockAdjustmentDto stockAdjustmentDto) {
+    public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId, StockAdjustmentDto stockAdjustmentDto) {
         return stockAdjustmentService.create(warehouseId, stockAdjustmentDto)
-                .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(adjustment)))
+                .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED).body(new StockAdjustmentResponse().data(adjustment)))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

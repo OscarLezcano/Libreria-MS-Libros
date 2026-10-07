@@ -33,7 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookListResponse'
     post:
       tags:
         - Books
@@ -50,7 +50,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookResponse'
   /books/{id}:
     get:
       tags:
@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookResponse'
         '404':
           description: Book not found
     put:
@@ -95,7 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookResponse'
         '404':
           description: Book not found
     delete:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookListResponse'
   /books/author/{authorId}:
     get:
       tags:
@@ -173,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/BookListResponse'
   /genres:
     get:
       tags:
@@ -203,7 +203,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/GenreListResponse'
     post:
       tags:
         - Genres
@@ -220,7 +220,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/GenreResponse'
   /genres/{id}:
     get:
       tags:
@@ -239,7 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     put:
@@ -265,7 +265,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     delete:
@@ -311,7 +311,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/AuthorListResponse'
     post:
       tags:
         - Authors
@@ -328,7 +328,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/AuthorResponse'
   /authors/{id}:
     get:
       tags:
@@ -347,7 +347,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     put:
@@ -373,7 +373,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     delete:
@@ -419,7 +419,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/WarehouseListResponse'
     post:
       tags:
         - Warehouses
@@ -436,7 +436,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/WarehouseResponse'
   /warehouses/{id}:
     get:
       tags:
@@ -455,7 +455,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     put:
@@ -481,7 +481,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     delete:
@@ -528,7 +528,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockListResponse'
   /stocks/book/{bookId}:
     get:
       tags:
@@ -559,7 +559,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockListResponse'
   /stocks/warehouse/{warehouseId}/book/{bookId}:
     get:
       tags:
@@ -584,7 +584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockResponse'
         '404':
           description: Stock not found
     post:
@@ -617,7 +617,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockResponse'
         '404':
           description: Warehouse not found
   /stock-adjustments/{id}:
@@ -638,7 +638,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockAdjustmentResponse'
         '404':
           description: Stock adjustment not found
   /stock-adjustments/warehouse/{warehouseId}:
@@ -671,7 +671,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockAdjustmentListResponse'
     post:
       tags:
         - StockAdjustments
@@ -695,7 +695,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Envelope'
+                $ref: '#/components/schemas/StockAdjustmentResponse'
         '400':
           description: Invalid stock adjustment
 components:
@@ -886,5 +886,89 @@ components:
       properties:
         data:
           type: object
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    BookResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/BookDto'
+    BookListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookDto'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    GenreResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/GenreDto'
+    GenreListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GenreDto'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AuthorResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthorDto'
+    AuthorListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorDto'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    WarehouseResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/WarehouseDto'
+    WarehouseListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WarehouseDto'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    StockResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StockDto'
+    StockListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockDto'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    StockAdjustmentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StockAdjustmentDto'
+    StockAdjustmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockAdjustmentDto'
         pagination:
           $ref: '#/components/schemas/Pagination'

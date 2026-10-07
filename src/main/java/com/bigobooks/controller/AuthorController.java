@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.AuthorDto;
-import com.bigobooks.dto.Envelope;
+import com.bigobooks.dto.AuthorListResponse;
+import com.bigobooks.dto.AuthorResponse;
 import com.bigobooks.services.AuthorService;
 import com.bigobooks.util.Envelopes;
 
@@ -29,27 +30,29 @@ public class AuthorController implements AuthorsApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<Envelope> getAuthors(String name, Integer page, Integer size) {
+    public ResponseEntity<AuthorListResponse> getAuthors(String name, Integer page, Integer size) {
         Page<AuthorDto> result = authorService.search(name, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new AuthorListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> getAuthorById(Long id) {
+    public ResponseEntity<AuthorResponse> getAuthorById(Long id) {
         return authorService.getById(id)
-                .map(author -> ResponseEntity.ok(Envelopes.single(author)))
+                .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<Envelope> createAuthor(AuthorDto authorDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(authorService.create(authorDto)));
+    public ResponseEntity<AuthorResponse> createAuthor(AuthorDto authorDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthorResponse().data(authorService.create(authorDto)));
     }
 
     @Override
-    public ResponseEntity<Envelope> updateAuthor(Long id, AuthorDto authorDto) {
+    public ResponseEntity<AuthorResponse> updateAuthor(Long id, AuthorDto authorDto) {
         return authorService.update(id, authorDto)
-                .map(author -> ResponseEntity.ok(Envelopes.single(author)))
+                .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

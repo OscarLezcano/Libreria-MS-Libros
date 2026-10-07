@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.BookDto;
-import com.bigobooks.dto.Envelope;
+import com.bigobooks.dto.BookListResponse;
+import com.bigobooks.dto.BookResponse;
 import com.bigobooks.services.BookService;
 import com.bigobooks.util.Envelopes;
 
@@ -29,39 +30,45 @@ public class BookController implements BooksApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<Envelope> getBooks(String title, Integer page, Integer size) {
+    public ResponseEntity<BookListResponse> getBooks(String title, Integer page, Integer size) {
         Page<BookDto> result = bookService.search(title, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> getBookById(Long id) {
+    public ResponseEntity<BookResponse> getBookById(Long id) {
         return bookService.getById(id)
-                .map(book -> ResponseEntity.ok(Envelopes.single(book)))
+                .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<Envelope> getBooksByGenre(Long genreId, Integer page, Integer size) {
+    public ResponseEntity<BookListResponse> getBooksByGenre(Long genreId, Integer page, Integer size) {
         Page<BookDto> result = bookService.getByGenre(genreId, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> getBooksByAuthor(Long authorId, Integer page, Integer size) {
+    public ResponseEntity<BookListResponse> getBooksByAuthor(Long authorId, Integer page, Integer size) {
         Page<BookDto> result = bookService.getByAuthor(authorId, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> createBook(BookDto bookDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(bookService.create(bookDto)));
+    public ResponseEntity<BookResponse> createBook(BookDto bookDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BookResponse().data(bookService.create(bookDto)));
     }
 
     @Override
-    public ResponseEntity<Envelope> updateBook(Long id, BookDto bookDto) {
+    public ResponseEntity<BookResponse> updateBook(Long id, BookDto bookDto) {
         return bookService.update(id, bookDto)
-                .map(book -> ResponseEntity.ok(Envelopes.single(book)))
+                .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

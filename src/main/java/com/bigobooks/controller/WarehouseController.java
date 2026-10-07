@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bigobooks.dto.Envelope;
 import com.bigobooks.dto.WarehouseDto;
+import com.bigobooks.dto.WarehouseListResponse;
+import com.bigobooks.dto.WarehouseResponse;
 import com.bigobooks.services.WarehouseService;
 import com.bigobooks.util.Envelopes;
 
@@ -29,27 +30,29 @@ public class WarehouseController implements WarehousesApi {
     private int maxPageSize;
 
     @Override
-    public ResponseEntity<Envelope> getWarehouses(String city, Integer page, Integer size) {
+    public ResponseEntity<WarehouseListResponse> getWarehouses(String city, Integer page, Integer size) {
         Page<WarehouseDto> result = warehouseService.findByCity(city, pageable(page, size));
-        return ResponseEntity.ok(Envelopes.page(result, result.getContent()));
+        return ResponseEntity.ok(new WarehouseListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
     }
 
     @Override
-    public ResponseEntity<Envelope> getWarehouseById(Long id) {
+    public ResponseEntity<WarehouseResponse> getWarehouseById(Long id) {
         return warehouseService.getById(id)
-                .map(warehouse -> ResponseEntity.ok(Envelopes.single(warehouse)))
+                .map(warehouse -> ResponseEntity.ok(new WarehouseResponse().data(warehouse)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<Envelope> createWarehouse(WarehouseDto warehouseDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(Envelopes.single(warehouseService.create(warehouseDto)));
+    public ResponseEntity<WarehouseResponse> createWarehouse(WarehouseDto warehouseDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new WarehouseResponse().data(warehouseService.create(warehouseDto)));
     }
 
     @Override
-    public ResponseEntity<Envelope> updateWarehouse(Long id, WarehouseDto warehouseDto) {
+    public ResponseEntity<WarehouseResponse> updateWarehouse(Long id, WarehouseDto warehouseDto) {
         return warehouseService.update(id, warehouseDto)
-                .map(warehouse -> ResponseEntity.ok(Envelopes.single(warehouse)))
+                .map(warehouse -> ResponseEntity.ok(new WarehouseResponse().data(warehouse)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
