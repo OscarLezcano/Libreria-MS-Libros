@@ -603,7 +603,6 @@ paths:
                 $ref: '#/components/schemas/StockDto'
         '404':
           description: Stock not found
-  /stocks/warehouse/{warehouseId}/book/{bookId}/quantity:
     post:
       tags:
         - Stocks
