@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.bigobooks.dto.BookDto;
+import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.book.Genre;
@@ -64,7 +65,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     }
 
     @Transactional
-    public BookDto create(BookDto dto) {
+    public BookDto create(BookRequestDto dto) {
         Book book = new Book();
         bookMapper.update(dto, book);
         book.setGenres(resolveGenres(dto.getGenreIds()));
@@ -73,7 +74,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     }
 
     @Transactional
-    public Optional<BookDto> update(Long id, BookDto dto) {
+    public Optional<BookDto> update(Long id, BookRequestDto dto) {
         return repository.findById(id).map(book -> {
             bookMapper.update(dto, book);
             if (dto.getGenreIds() != null) {

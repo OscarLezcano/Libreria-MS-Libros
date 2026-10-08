@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.WarehouseDto;
 import com.bigobooks.dto.WarehouseListResponse;
+import com.bigobooks.dto.WarehouseRequestDto;
 import com.bigobooks.dto.WarehouseResponse;
 import com.bigobooks.services.WarehouseService;
 import com.bigobooks.util.Envelopes;
@@ -45,13 +46,14 @@ public class WarehouseController implements WarehousesApi {
     }
 
     @Override
-    public ResponseEntity<WarehouseResponse> createWarehouse(WarehouseDto warehouseDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new WarehouseResponse().data(warehouseService.create(warehouseDto)));
+    public ResponseEntity<WarehouseResponse> createWarehouse(WarehouseRequestDto warehouseRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new WarehouseResponse().data(warehouseService.create(warehouseRequestDto)));
     }
 
     @Override
-    public ResponseEntity<WarehouseResponse> updateWarehouse(Long id, WarehouseDto warehouseDto) {
-        return warehouseService.update(id, warehouseDto)
+    public ResponseEntity<WarehouseResponse> updateWarehouse(Long id, WarehouseRequestDto warehouseRequestDto) {
+        return warehouseService.update(id, warehouseRequestDto)
                 .map(warehouse -> ResponseEntity.ok(new WarehouseResponse().data(warehouse)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.bigobooks.dto.AuthorDto;
+import com.bigobooks.dto.AuthorRequestDto;
 import com.bigobooks.entities.book.Author;
 
 @Mapper(componentModel = "spring")
@@ -20,5 +21,5 @@ public interface AuthorMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "books", ignore = true)
-    void update(AuthorDto dto, @MappingTarget Author author);
+    void update(AuthorRequestDto dto, @MappingTarget Author author);
 }

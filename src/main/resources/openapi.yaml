@@ -43,7 +43,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
       responses:
         '201':
           description: Book created
@@ -88,7 +88,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
       responses:
         '200':
           description: Book updated
@@ -213,7 +213,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
       responses:
         '201':
           description: Genre created
@@ -258,7 +258,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
       responses:
         '200':
           description: Genre updated
@@ -321,7 +321,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
       responses:
         '201':
           description: Author created
@@ -366,7 +366,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
       responses:
         '200':
           description: Author updated
@@ -429,7 +429,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
       responses:
         '201':
           description: Warehouse created
@@ -474,7 +474,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
       responses:
         '200':
           description: Warehouse updated
@@ -688,7 +688,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentRequestDto'
       responses:
         '201':
           description: Stock adjustment created

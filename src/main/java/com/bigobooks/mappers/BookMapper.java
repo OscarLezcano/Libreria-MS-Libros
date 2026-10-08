@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.bigobooks.dto.BookDto;
+import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.book.Genre;
@@ -27,7 +28,7 @@ public interface BookMapper {
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "authors", ignore = true)
     @Mapping(target = "wishlistedBy", ignore = true)
-    void update(BookDto dto, @MappingTarget Book book);
+    void update(BookRequestDto dto, @MappingTarget Book book);
 
     default List<Long> toGenreIds(List<Genre> genres) {
         return genres == null ? new ArrayList<>() : genres.stream().map(Genre::getId).toList();

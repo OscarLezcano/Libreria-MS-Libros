@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.bigobooks.dto.AuthorDto;
+import com.bigobooks.dto.AuthorRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.mappers.AuthorMapper;
 import com.bigobooks.repositories.AuthorRepository;
@@ -43,14 +44,14 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
     }
 
     @Transactional
-    public AuthorDto create(AuthorDto dto) {
+    public AuthorDto create(AuthorRequestDto dto) {
         Author author = new Author();
         author.setName(dto.getName());
         return authorMapper.toDto(repository.save(author));
     }
 
     @Transactional
-    public Optional<AuthorDto> update(Long id, AuthorDto dto) {
+    public Optional<AuthorDto> update(Long id, AuthorRequestDto dto) {
         return repository.findById(id).map(author -> {
             authorMapper.update(dto, author);
             return authorMapper.toDto(repository.save(author));

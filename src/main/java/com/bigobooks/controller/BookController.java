@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookListResponse;
+import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.dto.BookResponse;
 import com.bigobooks.services.BookService;
 import com.bigobooks.util.Envelopes;
@@ -61,13 +62,14 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    public ResponseEntity<BookResponse> createBook(BookDto bookDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new BookResponse().data(bookService.create(bookDto)));
+    public ResponseEntity<BookResponse> createBook(BookRequestDto bookRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BookResponse().data(bookService.create(bookRequestDto)));
     }
 
     @Override
-    public ResponseEntity<BookResponse> updateBook(Long id, BookDto bookDto) {
-        return bookService.update(id, bookDto)
+    public ResponseEntity<BookResponse> updateBook(Long id, BookRequestDto bookRequestDto) {
+        return bookService.update(id, bookRequestDto)
                 .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

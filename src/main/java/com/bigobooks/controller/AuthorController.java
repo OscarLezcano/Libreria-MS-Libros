@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.AuthorDto;
 import com.bigobooks.dto.AuthorListResponse;
+import com.bigobooks.dto.AuthorRequestDto;
 import com.bigobooks.dto.AuthorResponse;
 import com.bigobooks.services.AuthorService;
 import com.bigobooks.util.Envelopes;
@@ -45,13 +46,14 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> createAuthor(AuthorDto authorDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthorResponse().data(authorService.create(authorDto)));
+    public ResponseEntity<AuthorResponse> createAuthor(AuthorRequestDto authorRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new AuthorResponse().data(authorService.create(authorRequestDto)));
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> updateAuthor(Long id, AuthorDto authorDto) {
-        return authorService.update(id, authorDto)
+    public ResponseEntity<AuthorResponse> updateAuthor(Long id, AuthorRequestDto authorRequestDto) {
+        return authorService.update(id, authorRequestDto)
                 .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.GenreDto;
 import com.bigobooks.dto.GenreListResponse;
+import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.dto.GenreResponse;
 import com.bigobooks.services.GenreService;
 import com.bigobooks.util.Envelopes;
@@ -45,13 +46,14 @@ public class GenreController implements GenresApi {
     }
 
     @Override
-    public ResponseEntity<GenreResponse> createGenre(GenreDto genreDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GenreResponse().data(genreService.create(genreDto)));
+    public ResponseEntity<GenreResponse> createGenre(GenreRequestDto genreRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new GenreResponse().data(genreService.create(genreRequestDto)));
     }
 
     @Override
-    public ResponseEntity<GenreResponse> updateGenre(Long id, GenreDto genreDto) {
-        return genreService.update(id, genreDto)
+    public ResponseEntity<GenreResponse> updateGenre(Long id, GenreRequestDto genreRequestDto) {
+        return genreService.update(id, genreRequestDto)
                 .map(genre -> ResponseEntity.ok(new GenreResponse().data(genre)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

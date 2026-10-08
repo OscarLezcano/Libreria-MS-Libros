@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.bigobooks.dto.WarehouseDto;
+import com.bigobooks.dto.WarehouseRequestDto;
 import com.bigobooks.entities.stock.Warehouse;
 import com.bigobooks.mappers.WarehouseMapper;
 import com.bigobooks.repositories.WarehouseRepository;
@@ -43,14 +44,14 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
     }
 
     @Transactional
-    public WarehouseDto create(WarehouseDto dto) {
+    public WarehouseDto create(WarehouseRequestDto dto) {
         Warehouse warehouse = new Warehouse();
         warehouseMapper.update(dto, warehouse);
         return warehouseMapper.toDto(repository.save(warehouse));
     }
 
     @Transactional
-    public Optional<WarehouseDto> update(Long id, WarehouseDto dto) {
+    public Optional<WarehouseDto> update(Long id, WarehouseRequestDto dto) {
         return repository.findById(id).map(warehouse -> {
             warehouseMapper.update(dto, warehouse);
             return warehouseMapper.toDto(repository.save(warehouse));

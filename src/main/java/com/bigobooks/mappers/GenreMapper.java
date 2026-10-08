@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import com.bigobooks.dto.GenreDto;
+import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.entities.book.Genre;
 
 @Mapper(componentModel = "spring")
@@ -20,5 +21,5 @@ public interface GenreMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "books", ignore = true)
-    void update(GenreDto dto, @MappingTarget Genre genre);
+    void update(GenreRequestDto dto, @MappingTarget Genre genre);
 }

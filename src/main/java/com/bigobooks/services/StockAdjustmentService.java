@@ -10,8 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bigobooks.dto.StockAdjustmentDetailDto;
+import com.bigobooks.dto.StockAdjustmentDetailRequestDto;
 import com.bigobooks.dto.StockAdjustmentDto;
+import com.bigobooks.dto.StockAdjustmentRequestDto;
 import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.stock.StockAdjustment;
 import com.bigobooks.entities.stock.StockAdjustmentDetail;
@@ -60,7 +61,7 @@ public class StockAdjustmentService
     }
 
     @Transactional
-    public Optional<StockAdjustmentDto> create(Long warehouseId, StockAdjustmentDto dto) {
+    public Optional<StockAdjustmentDto> create(Long warehouseId, StockAdjustmentRequestDto dto) {
         Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
         if (warehouse.isEmpty() || dto.getDetails() == null || dto.getDetails().isEmpty()) {
             return Optional.empty();
@@ -81,9 +82,9 @@ public class StockAdjustmentService
         return Optional.of(stockAdjustmentMapper.toDto(saved));
     }
 
-    private List<StockAdjustmentDetail> toDetails(List<StockAdjustmentDetailDto> details) {
+    private List<StockAdjustmentDetail> toDetails(List<StockAdjustmentDetailRequestDto> details) {
         List<StockAdjustmentDetail> entities = new ArrayList<>();
-        for (StockAdjustmentDetailDto detail : details) {
+        for (StockAdjustmentDetailRequestDto detail : details) {
             StockAdjustmentDetail entity = new StockAdjustmentDetail();
             entity.setBook(detail.getBook());
             entity.setPhysicalQuantity(detail.getPhysicalQuantity());

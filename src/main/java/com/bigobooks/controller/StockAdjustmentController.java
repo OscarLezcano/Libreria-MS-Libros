@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.StockAdjustmentDto;
 import com.bigobooks.dto.StockAdjustmentListResponse;
+import com.bigobooks.dto.StockAdjustmentRequestDto;
 import com.bigobooks.dto.StockAdjustmentResponse;
 import com.bigobooks.services.StockAdjustmentService;
 import com.bigobooks.util.Envelopes;
@@ -46,8 +47,9 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
     }
 
     @Override
-    public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId, StockAdjustmentDto stockAdjustmentDto) {
-        return stockAdjustmentService.create(warehouseId, stockAdjustmentDto)
+    public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId,
+            StockAdjustmentRequestDto stockAdjustmentRequestDto) {
+        return stockAdjustmentService.create(warehouseId, stockAdjustmentRequestDto)
                 .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED).body(new StockAdjustmentResponse().data(adjustment)))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

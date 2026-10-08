@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.bigobooks.dto.GenreDto;
+import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.entities.book.Genre;
 import com.bigobooks.mappers.GenreMapper;
 import com.bigobooks.repositories.GenreRepository;
@@ -43,14 +44,14 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
     }
 
     @Transactional
-    public GenreDto create(GenreDto dto) {
+    public GenreDto create(GenreRequestDto dto) {
         Genre genre = new Genre();
         genre.setName(dto.getName());
         return genreMapper.toDto(repository.save(genre));
     }
 
     @Transactional
-    public Optional<GenreDto> update(Long id, GenreDto dto) {
+    public Optional<GenreDto> update(Long id, GenreRequestDto dto) {
         return repository.findById(id).map(genre -> {
             genreMapper.update(dto, genre);
             return genreMapper.toDto(repository.save(genre));
