@@ -1,6 +1,7 @@
 package com.bigobooks.services;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,10 +13,9 @@ import com.bigobooks.dto.GenreDto;
 import com.bigobooks.entities.book.Genre;
 import com.bigobooks.mappers.GenreMapper;
 import com.bigobooks.repositories.GenreRepository;
-import com.bigobooks.service.BaseService;
 
 @Service
-public class GenreService extends BaseService<Genre, GenreRepository> {
+public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepository> {
 
     private final GenreMapper genreMapper;
 
@@ -24,19 +24,14 @@ public class GenreService extends BaseService<Genre, GenreRepository> {
         this.genreMapper = genreMapper;
     }
 
-    @Transactional(readOnly = true)
-    public Page<GenreDto> getAll(Pageable pageable) {
-        return getRepository().findAll(pageable).map(genreMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<GenreDto> getById(Long id) {
-        return findById(id).map(genreMapper::toDto);
+    @Override
+    protected Function<Genre, GenreDto> toDtoMapper() {
+        return genreMapper::toDto;
     }
 
     @Transactional(readOnly = true)
     public Optional<GenreDto> findByName(String name) {
-        return getRepository().findByName(name).map(genreMapper::toDto);
+        return repository.findByName(name).map(genreMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -44,26 +39,21 @@ public class GenreService extends BaseService<Genre, GenreRepository> {
         if (!StringUtils.hasText(name)) {
             return getAll(pageable);
         }
-        return getRepository().findByNameContainingIgnoreCase(name, pageable).map(genreMapper::toDto);
+        return repository.findByNameContainingIgnoreCase(name, pageable).map(genreMapper::toDto);
     }
 
     @Transactional
     public GenreDto create(GenreDto dto) {
         Genre genre = new Genre();
         genre.setName(dto.getName());
-        return genreMapper.toDto(save(genre));
+        return genreMapper.toDto(repository.save(genre));
     }
 
     @Transactional
     public Optional<GenreDto> update(Long id, GenreDto dto) {
-        return findById(id).map(genre -> {
+        return repository.findById(id).map(genre -> {
             genreMapper.update(dto, genre);
-            return genreMapper.toDto(save(genre));
+            return genreMapper.toDto(repository.save(genre));
         });
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        findById(id).ifPresent(genre -> deleteById(genre.getId()));
     }
 }

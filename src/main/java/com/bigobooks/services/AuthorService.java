@@ -1,6 +1,7 @@
 package com.bigobooks.services;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,10 +13,9 @@ import com.bigobooks.dto.AuthorDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.mappers.AuthorMapper;
 import com.bigobooks.repositories.AuthorRepository;
-import com.bigobooks.service.BaseService;
 
 @Service
-public class AuthorService extends BaseService<Author, AuthorRepository> {
+public class AuthorService extends AbstractCrudService<Author, AuthorDto, AuthorRepository> {
 
     private final AuthorMapper authorMapper;
 
@@ -24,19 +24,14 @@ public class AuthorService extends BaseService<Author, AuthorRepository> {
         this.authorMapper = authorMapper;
     }
 
-    @Transactional(readOnly = true)
-    public Page<AuthorDto> getAll(Pageable pageable) {
-        return getRepository().findAll(pageable).map(authorMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<AuthorDto> getById(Long id) {
-        return findById(id).map(authorMapper::toDto);
+    @Override
+    protected Function<Author, AuthorDto> toDtoMapper() {
+        return authorMapper::toDto;
     }
 
     @Transactional(readOnly = true)
     public Optional<AuthorDto> findByName(String name) {
-        return getRepository().findByName(name).map(authorMapper::toDto);
+        return repository.findByName(name).map(authorMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -44,26 +39,21 @@ public class AuthorService extends BaseService<Author, AuthorRepository> {
         if (!StringUtils.hasText(name)) {
             return getAll(pageable);
         }
-        return getRepository().findByNameContainingIgnoreCase(name, pageable).map(authorMapper::toDto);
+        return repository.findByNameContainingIgnoreCase(name, pageable).map(authorMapper::toDto);
     }
 
     @Transactional
     public AuthorDto create(AuthorDto dto) {
         Author author = new Author();
         author.setName(dto.getName());
-        return authorMapper.toDto(save(author));
+        return authorMapper.toDto(repository.save(author));
     }
 
     @Transactional
     public Optional<AuthorDto> update(Long id, AuthorDto dto) {
-        return findById(id).map(author -> {
+        return repository.findById(id).map(author -> {
             authorMapper.update(dto, author);
-            return authorMapper.toDto(save(author));
+            return authorMapper.toDto(repository.save(author));
         });
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        findById(id).ifPresent(author -> deleteById(author.getId()));
     }
 }

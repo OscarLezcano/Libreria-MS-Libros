@@ -24,11 +24,8 @@ public interface StockRepository extends BaseRepository<Stock> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from Stock s where s.bookId = :bookId and s.warehouse.id = :warehouseId")
-    Optional<Stock> findForUpdateByBookIdAndWarehouseId(@Param("bookId") Long bookId,
+    Optional<Stock> findByBookIdAndWarehouseId(@Param("bookId") Long bookId,
             @Param("warehouseId") Long warehouseId);
-
-    @Query("select coalesce(sum(s.quantity), 0) from Stock s where s.bookId = :bookId")
-    int sumQuantityByBookId(@Param("bookId") Long bookId);
 
     @Query("select coalesce(sum(s.quantity), 0) from Stock s where s.bookId = :bookId and s.warehouse.id = :warehouseId")
     int sumQuantityByBookIdAndWarehouseId(@Param("bookId") Long bookId, @Param("warehouseId") Long warehouseId);

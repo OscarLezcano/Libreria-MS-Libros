@@ -3,6 +3,7 @@ package com.bigobooks.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,9 @@ import com.bigobooks.mappers.BookMapper;
 import com.bigobooks.repositories.AuthorRepository;
 import com.bigobooks.repositories.BookRepository;
 import com.bigobooks.repositories.GenreRepository;
-import com.bigobooks.service.BaseService;
 
 @Service
-public class BookService extends BaseService<Book, BookRepository> {
+public class BookService extends AbstractCrudService<Book, BookDto, BookRepository> {
 
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
@@ -35,19 +35,14 @@ public class BookService extends BaseService<Book, BookRepository> {
         this.bookMapper = bookMapper;
     }
 
-    @Transactional(readOnly = true)
-    public Page<BookDto> getAll(Pageable pageable) {
-        return getRepository().findAll(pageable).map(bookMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<BookDto> getById(Long id) {
-        return findById(id).map(bookMapper::toDto);
+    @Override
+    protected Function<Book, BookDto> toDtoMapper() {
+        return bookMapper::toDto;
     }
 
     @Transactional(readOnly = true)
     public Optional<BookDto> findByTitle(String title) {
-        return getRepository().findByTitle(title).map(bookMapper::toDto);
+        return repository.findByTitle(title).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -55,17 +50,17 @@ public class BookService extends BaseService<Book, BookRepository> {
         if (!StringUtils.hasText(title)) {
             return getAll(pageable);
         }
-        return getRepository().searchByTitle(title.trim(), pageable).map(bookMapper::toDto);
+        return repository.searchByTitle(title.trim(), pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByGenre(Long genreId, Pageable pageable) {
-        return getRepository().findByGenres_Id(genreId, pageable).map(bookMapper::toDto);
+        return repository.findByGenres_Id(genreId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByAuthor(Long authorId, Pageable pageable) {
-        return getRepository().findByAuthors_Id(authorId, pageable).map(bookMapper::toDto);
+        return repository.findByAuthors_Id(authorId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional
@@ -74,12 +69,12 @@ public class BookService extends BaseService<Book, BookRepository> {
         bookMapper.update(dto, book);
         book.setGenres(resolveGenres(dto.getGenreIds()));
         book.setAuthors(resolveAuthors(dto.getAuthorIds()));
-        return bookMapper.toDto(save(book));
+        return bookMapper.toDto(repository.save(book));
     }
 
     @Transactional
     public Optional<BookDto> update(Long id, BookDto dto) {
-        return findById(id).map(book -> {
+        return repository.findById(id).map(book -> {
             bookMapper.update(dto, book);
             if (dto.getGenreIds() != null) {
                 book.setGenres(resolveGenres(dto.getGenreIds()));
@@ -87,13 +82,8 @@ public class BookService extends BaseService<Book, BookRepository> {
             if (dto.getAuthorIds() != null) {
                 book.setAuthors(resolveAuthors(dto.getAuthorIds()));
             }
-            return bookMapper.toDto(save(book));
+            return bookMapper.toDto(repository.save(book));
         });
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        findById(id).ifPresent(book -> deleteById(book.getId()));
     }
 
     private List<Genre> resolveGenres(List<Long> genreIds) {

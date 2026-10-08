@@ -3,6 +3,7 @@ package com.bigobooks.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,10 @@ import com.bigobooks.repositories.BookRepository;
 import com.bigobooks.repositories.StockAdjustmentDetailRepository;
 import com.bigobooks.repositories.StockAdjustmentRepository;
 import com.bigobooks.repositories.WarehouseRepository;
-import com.bigobooks.service.BaseService;
 
 @Service
-public class StockAdjustmentService extends BaseService<StockAdjustment, StockAdjustmentRepository> {
+public class StockAdjustmentService
+        extends AbstractCrudService<StockAdjustment, StockAdjustmentDto, StockAdjustmentRepository> {
 
     private final StockAdjustmentDetailRepository stockAdjustmentDetailRepository;
     private final StockService stockService;
@@ -43,24 +44,19 @@ public class StockAdjustmentService extends BaseService<StockAdjustment, StockAd
         this.stockAdjustmentMapper = stockAdjustmentMapper;
     }
 
-    @Transactional(readOnly = true)
-    public Page<StockAdjustmentDto> getAll(Pageable pageable) {
-        return getRepository().findAll(pageable).map(stockAdjustmentMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<StockAdjustmentDto> getById(Long id) {
-        return findById(id).map(stockAdjustmentMapper::toDto);
+    @Override
+    protected Function<StockAdjustment, StockAdjustmentDto> toDtoMapper() {
+        return stockAdjustmentMapper::toDto;
     }
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByWarehouse(Long warehouseId, Pageable pageable) {
-        return getRepository().findByWarehouse_Id(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByWarehouse_Id(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByBook(Long bookId, Pageable pageable) {
-        return getRepository().findByDetails_Book(bookId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByDetails_Book(bookId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional
@@ -75,7 +71,7 @@ public class StockAdjustmentService extends BaseService<StockAdjustment, StockAd
         adjustment.setWarehouse(warehouse.get());
         adjustment.setDetails(toDetails(dto.getDetails()));
 
-        StockAdjustment saved = save(adjustment);
+        StockAdjustment saved = repository.save(adjustment);
         saved.getDetails().forEach(detail -> {
             prepareDetail(detail, saved, warehouse.get().getId());
             stockAdjustmentDetailRepository.save(detail);
