@@ -14,7 +14,8 @@ public interface GenreRepository extends BaseRepository<Genre> {
 
     Optional<Genre> findByName(String name);
 
-    Page<Genre> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    @Query("select b from Genre b where lower(b.name) like lower(concat('%', :name, '%'))")
+    Page<Genre> searchByName(String name, Pageable pageable);
 
     @Query(value = "SELECT * FROM genre WHERE is_deleted = true", nativeQuery = true)
     List<Genre> findDeleted();

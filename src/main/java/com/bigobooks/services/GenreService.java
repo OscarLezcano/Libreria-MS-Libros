@@ -39,7 +39,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
         if (!StringUtils.hasText(name)) {
             return getAll(pageable);
         }
-        return repository.findByNameContainingIgnoreCase(name, pageable).map(genreMapper::toDto);
+        return repository.searchByName(name, pageable).map(genreMapper::toDto);
     }
 
     @Transactional

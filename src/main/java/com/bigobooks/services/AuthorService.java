@@ -39,7 +39,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
         if (!StringUtils.hasText(name)) {
             return getAll(pageable);
         }
-        return repository.findByNameContainingIgnoreCase(name, pageable).map(authorMapper::toDto);
+        return repository.searchByName(name, pageable).map(authorMapper::toDto);
     }
 
     @Transactional

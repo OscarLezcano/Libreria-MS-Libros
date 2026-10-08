@@ -14,7 +14,8 @@ public interface AuthorRepository extends BaseRepository<Author> {
 
     Optional<Author> findByName(String name);
 
-    Page<Author> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    @Query("select b from Author b where lower(b.name) like lower(concat('%', :name, '%'))")
+    Page<Author> searchByName(String name, Pageable pageable);
 
     @Query(value = "SELECT * FROM author WHERE is_deleted = true", nativeQuery = true)
     List<Author> findDeleted();

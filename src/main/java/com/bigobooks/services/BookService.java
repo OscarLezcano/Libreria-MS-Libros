@@ -50,7 +50,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
         if (!StringUtils.hasText(title)) {
             return getAll(pageable);
         }
-        return repository.searchByTitle(title.trim(), pageable).map(bookMapper::toDto);
+        return repository.searchByName(title.trim(), pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)

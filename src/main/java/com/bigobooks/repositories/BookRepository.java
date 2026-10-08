@@ -20,7 +20,7 @@ public interface BookRepository extends BaseRepository<Book> {
     Page<Book> findByAuthors_Id(Long authorId, Pageable pageable);
 
     @Query("select b from Book b where lower(b.title) like lower(concat('%', :title, '%'))")
-    Page<Book> searchByTitle(@Param("title") String title, Pageable pageable);
+    Page<Book> searchByName(@Param("title") String title, Pageable pageable);
 
     @Query(value = "SELECT * FROM book WHERE is_deleted = true", nativeQuery = true)
     List<Book> findDeleted();
