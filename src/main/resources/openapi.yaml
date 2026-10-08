@@ -33,7 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
     post:
       tags:
         - Books
@@ -43,14 +43,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookDto'
       responses:
         '201':
           description: Book created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
   /books/{id}:
     get:
       tags:
@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
         '404':
           description: Book not found
     put:
@@ -88,14 +88,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookDto'
       responses:
         '200':
           description: Book updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
         '404':
           description: Book not found
     delete:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
   /books/author/{authorId}:
     get:
       tags:
@@ -173,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
   /genres:
     get:
       tags:
@@ -203,7 +203,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenreListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreListResponse'
     post:
       tags:
         - Genres
@@ -213,14 +213,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GenreDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreDto'
       responses:
         '201':
           description: Genre created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenreResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
   /genres/{id}:
     get:
       tags:
@@ -239,7 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenreResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     put:
@@ -258,14 +258,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GenreDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreDto'
       responses:
         '200':
           description: Genre updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenreResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     delete:
@@ -311,7 +311,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorListResponse'
     post:
       tags:
         - Authors
@@ -321,14 +321,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthorDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorDto'
       responses:
         '201':
           description: Author created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
   /authors/{id}:
     get:
       tags:
@@ -347,7 +347,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     put:
@@ -366,14 +366,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthorDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorDto'
       responses:
         '200':
           description: Author updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     delete:
@@ -419,7 +419,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WarehouseListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseListResponse'
     post:
       tags:
         - Warehouses
@@ -429,14 +429,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WarehouseDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseDto'
       responses:
         '201':
           description: Warehouse created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
   /warehouses/{id}:
     get:
       tags:
@@ -455,7 +455,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     put:
@@ -474,14 +474,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WarehouseDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseDto'
       responses:
         '200':
           description: Warehouse updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     delete:
@@ -528,7 +528,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
   /stocks/book/{bookId}:
     get:
       tags:
@@ -559,7 +559,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
   /stocks/warehouse/{warehouseId}/book/{bookId}:
     get:
       tags:
@@ -584,7 +584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
         '404':
           description: Stock not found
     post:
@@ -610,14 +610,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StockQuantityRequestDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockQuantityRequestDto'
       responses:
         '200':
           description: Stock set
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
         '404':
           description: Warehouse not found
   /stock-adjustments/{id}:
@@ -638,7 +638,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockAdjustmentResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
         '404':
           description: Stock adjustment not found
   /stock-adjustments/warehouse/{warehouseId}:
@@ -671,7 +671,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockAdjustmentListResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentListResponse'
     post:
       tags:
         - StockAdjustments
@@ -688,287 +688,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StockAdjustmentDto'
+              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentDto'
       responses:
         '201':
           description: Stock adjustment created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StockAdjustmentResponse'
+                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
         '400':
           description: Invalid stock adjustment
-components:
-  schemas:
-    BookDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        coverUrl:
-          type: string
-          example: 'https://covers.example.com/9789876543210.jpg'
-        title:
-          type: string
-          example: El Principito
-        description:
-          type: string
-          example: Un aviador cae en el desierto del Sahara y conoce a un pequeño príncipe.
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-        genreIds:
-          type: array
-          items:
-            type: integer
-            format: int64
-          example:
-            - 1
-        authorIds:
-          type: array
-          items:
-            type: integer
-            format: int64
-          example:
-            - 1
-    GenreDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        name:
-          type: string
-          example: Fantasía
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-    AuthorDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        name:
-          type: string
-          example: Gabriel García Márquez
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-    WarehouseDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        name:
-          type: string
-          example: Central Asunción
-        address:
-          type: string
-          example: Av. España 1234
-        city:
-          type: string
-          example: Asunción
-        phone:
-          type: string
-          example: '+595 21 1234567'
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-    StockDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        quantity:
-          type: integer
-          example: 25
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-        warehouse:
-          allOf:
-            - $ref: '#/components/schemas/WarehouseDto'
-          example:
-            id: 1
-            name: Central Asunción
-            city: Asunción
-    StockAdjustmentDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        note:
-          type: string
-          example: Conteo físico mensual
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/StockAdjustmentDetailDto'
-          example:
-            - id: 1
-              book: 1
-              bookName: El Principito
-              systemQuantity: 24
-              physicalQuantity: 25
-    StockAdjustmentDetailDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        book:
-          type: integer
-          format: int64
-          example: 1
-        bookName:
-          type: string
-          example: El Principito
-        systemQuantity:
-          type: integer
-          example: 24
-        physicalQuantity:
-          type: integer
-          example: 25
-        createdAt:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00'
-    StockQuantityRequestDto:
-      type: object
-      required:
-        - quantity
-      properties:
-        quantity:
-          type: integer
-          example: 10
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int32
-          example: 0
-        size:
-          type: integer
-          format: int32
-          example: 25
-        totalElements:
-          type: integer
-          format: int64
-          example: 103
-        totalPages:
-          type: integer
-          format: int32
-          example: 5
-    Envelope:
-      type: object
-      properties:
-        data:
-          type: object
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    BookResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/BookDto'
-    BookListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BookDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    GenreResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/GenreDto'
-    GenreListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/GenreDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    AuthorResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/AuthorDto'
-    AuthorListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthorDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    WarehouseResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/WarehouseDto'
-    WarehouseListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/WarehouseDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    StockResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/StockDto'
-    StockListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/StockDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    StockAdjustmentResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/StockAdjustmentDto'
-    StockAdjustmentListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/StockAdjustmentDto'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
