@@ -33,7 +33,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
     post:
       tags:
         - Books
@@ -43,14 +43,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
       responses:
         '201':
           description: Book created
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
   /books/{id}:
     get:
       tags:
@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
         '404':
           description: Book not found
     put:
@@ -88,14 +88,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
       responses:
         '200':
           description: Book updated
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
         '404':
           description: Book not found
     delete:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
   /books/author/{authorId}:
     get:
       tags:
@@ -173,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
   /genres:
     get:
       tags:
@@ -203,7 +203,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreListResponse'
     post:
       tags:
         - Genres
@@ -213,14 +213,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
       responses:
         '201':
           description: Genre created
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
   /genres/{id}:
     get:
       tags:
@@ -239,7 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     put:
@@ -258,14 +258,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
       responses:
         '200':
           description: Genre updated
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
         '404':
           description: Genre not found
     delete:
@@ -311,7 +311,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorListResponse'
     post:
       tags:
         - Authors
@@ -321,14 +321,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
       responses:
         '201':
           description: Author created
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
   /authors/{id}:
     get:
       tags:
@@ -347,7 +347,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     put:
@@ -366,14 +366,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
       responses:
         '200':
           description: Author updated
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
         '404':
           description: Author not found
     delete:
@@ -419,7 +419,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseListResponse'
     post:
       tags:
         - Warehouses
@@ -429,14 +429,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
       responses:
         '201':
           description: Warehouse created
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
   /warehouses/{id}:
     get:
       tags:
@@ -455,7 +455,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     put:
@@ -474,14 +474,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
       responses:
         '200':
           description: Warehouse updated
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
         '404':
           description: Warehouse not found
     delete:
@@ -528,7 +528,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
   /stocks/book/{bookId}:
     get:
       tags:
@@ -559,7 +559,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
   /stocks/warehouse/{warehouseId}/book/{bookId}:
     get:
       tags:
@@ -584,7 +584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
         '404':
           description: Stock not found
     post:
@@ -610,14 +610,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockQuantityRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockQuantityRequestDto'
       responses:
         '200':
           description: Stock set
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
         '404':
           description: Warehouse not found
   /stock-adjustments/{id}:
@@ -638,7 +638,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
         '404':
           description: Stock adjustment not found
   /stock-adjustments/warehouse/{warehouseId}:
@@ -671,7 +671,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentListResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentListResponse'
     post:
       tags:
         - StockAdjustments
@@ -688,13 +688,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentRequestDto'
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentRequestDto'
       responses:
         '201':
           description: Stock adjustment created
           content:
             application/json:
               schema:
-                $ref: '../../../../../bigobooks/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
         '400':
           description: Invalid stock adjustment
