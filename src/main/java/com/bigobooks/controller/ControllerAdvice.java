@@ -15,14 +15,14 @@ public class ControllerAdvice {
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<ErrorDto> runtimeExceptionHandler(RuntimeException ex) {
         ErrorDto error = ErrorDto.builder().message(ex.getMessage()).build();
-        // System.err.println(ex);
+        log.warn("Error de ejecución: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorDto> exceptionHandler(Exception ex) {
         ErrorDto error = ErrorDto.builder().message("Internal Server Error").build();
-        log.error(ex.getMessage());
+        log.error("Error no controlado: ", ex);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
