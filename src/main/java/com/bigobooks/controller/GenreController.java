@@ -3,8 +3,6 @@ package com.bigobooks.controller;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +13,7 @@ import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.dto.GenreResponse;
 import com.bigobooks.services.GenreService;
 import com.bigobooks.util.Envelopes;
+import com.bigobooks.util.Pageables;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +31,7 @@ public class GenreController implements GenresApi {
 
     @Override
     public ResponseEntity<GenreListResponse> getGenres(String name, Integer page, Integer size) {
-        Page<GenreDto> result = genreService.search(name, pageable(page, size));
+        Page<GenreDto> result = genreService.search(name, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new GenreListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -62,11 +61,5 @@ public class GenreController implements GenresApi {
     public ResponseEntity<Void> deleteGenre(Long id) {
         genreService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private Pageable pageable(Integer page, Integer size) {
-        int pageNo = page == null ? 0 : page;
-        int pageSize = Math.min(size == null ? defaultPageSize : size, maxPageSize);
-        return PageRequest.of(pageNo, pageSize);
     }
 }

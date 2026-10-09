@@ -3,8 +3,6 @@ package com.bigobooks.controller;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +13,7 @@ import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.dto.BookResponse;
 import com.bigobooks.services.BookService;
 import com.bigobooks.util.Envelopes;
+import com.bigobooks.util.Pageables;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +31,7 @@ public class BookController implements BooksApi {
 
     @Override
     public ResponseEntity<BookListResponse> getBooks(String title, Integer page, Integer size) {
-        Page<BookDto> result = bookService.search(title, pageable(page, size));
+        Page<BookDto> result = bookService.search(title, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new BookListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -47,7 +46,7 @@ public class BookController implements BooksApi {
 
     @Override
     public ResponseEntity<BookListResponse> getBooksByGenre(Long genreId, Integer page, Integer size) {
-        Page<BookDto> result = bookService.getByGenre(genreId, pageable(page, size));
+        Page<BookDto> result = bookService.getByGenre(genreId, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new BookListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -55,7 +54,7 @@ public class BookController implements BooksApi {
 
     @Override
     public ResponseEntity<BookListResponse> getBooksByAuthor(Long authorId, Integer page, Integer size) {
-        Page<BookDto> result = bookService.getByAuthor(authorId, pageable(page, size));
+        Page<BookDto> result = bookService.getByAuthor(authorId, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new BookListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -78,11 +77,5 @@ public class BookController implements BooksApi {
     public ResponseEntity<Void> deleteBook(Long id) {
         bookService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private Pageable pageable(Integer page, Integer size) {
-        int pageNo = page == null ? 0 : page;
-        int pageSize = Math.min(size == null ? defaultPageSize : size, maxPageSize);
-        return PageRequest.of(pageNo, pageSize);
     }
 }

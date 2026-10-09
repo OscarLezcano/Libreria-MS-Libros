@@ -3,8 +3,6 @@ package com.bigobooks.controller;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +12,7 @@ import com.bigobooks.dto.StockResponse;
 import com.bigobooks.dto.StockQuantityRequestDto;
 import com.bigobooks.services.StockService;
 import com.bigobooks.util.Envelopes;
+import com.bigobooks.util.Pageables;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,7 @@ public class StockController implements StocksApi {
 
     @Override
     public ResponseEntity<StockListResponse> getStocksByWarehouse(Long warehouseId, Integer page, Integer size) {
-        Page<StockDto> result = stockService.getByWarehouse(warehouseId, pageable(page, size));
+        Page<StockDto> result = stockService.getByWarehouse(warehouseId, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new StockListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -39,7 +38,7 @@ public class StockController implements StocksApi {
 
     @Override
     public ResponseEntity<StockListResponse> getStocksByBook(Long bookId, Integer page, Integer size) {
-        Page<StockDto> result = stockService.getByBook(bookId, pageable(page, size));
+        Page<StockDto> result = stockService.getByBook(bookId, Pageables.of(page, size, defaultPageSize, maxPageSize));
         return ResponseEntity.ok(new StockListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -58,11 +57,5 @@ public class StockController implements StocksApi {
         return stockService.changeQuantity(warehouseId, bookId, stockQuantityRequestDto.getQuantity())
                 .map(stock -> ResponseEntity.ok(new StockResponse().data(stock)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    private Pageable pageable(Integer page, Integer size) {
-        int pageNo = page == null ? 0 : page;
-        int pageSize = Math.min(size == null ? defaultPageSize : size, maxPageSize);
-        return PageRequest.of(pageNo, pageSize);
     }
 }
