@@ -1,7 +1,5 @@
 package com.bigobooks.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,16 +19,11 @@ import lombok.RequiredArgsConstructor;
 public class StockController implements StocksApi {
 
     private final StockService stockService;
-
-    @Value("${app.pagination.page-size:25}")
-    private int defaultPageSize;
-
-    @Value("${app.pagination.max-page-size:100}")
-    private int maxPageSize;
+    private final Pageables pageables;
 
     @Override
     public ResponseEntity<StockListResponse> getStocksByWarehouse(Long warehouseId, Integer page, Integer size) {
-        Page<StockDto> result = stockService.getByWarehouse(warehouseId, Pageables.of(page, size, defaultPageSize, maxPageSize));
+        Page<StockDto> result = stockService.getByWarehouse(warehouseId, pageables.of(page, size));
         return ResponseEntity.ok(new StockListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
@@ -38,7 +31,7 @@ public class StockController implements StocksApi {
 
     @Override
     public ResponseEntity<StockListResponse> getStocksByBook(Long bookId, Integer page, Integer size) {
-        Page<StockDto> result = stockService.getByBook(bookId, Pageables.of(page, size, defaultPageSize, maxPageSize));
+        Page<StockDto> result = stockService.getByBook(bookId, pageables.of(page, size));
         return ResponseEntity.ok(new StockListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));

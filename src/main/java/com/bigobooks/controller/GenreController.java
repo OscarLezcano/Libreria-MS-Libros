@@ -1,7 +1,5 @@
 package com.bigobooks.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class GenreController implements GenresApi {
 
     private final GenreService genreService;
-
-    @Value("${app.pagination.page-size:25}")
-    private int defaultPageSize;
-
-    @Value("${app.pagination.max-page-size:100}")
-    private int maxPageSize;
+    private final Pageables pageables;
 
     @Override
     public ResponseEntity<GenreListResponse> getGenres(String name, Integer page, Integer size) {
-        Page<GenreDto> result = genreService.search(name, Pageables.of(page, size, defaultPageSize, maxPageSize));
+        Page<GenreDto> result = genreService.search(name, pageables.of(page, size));
         return ResponseEntity.ok(new GenreListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));

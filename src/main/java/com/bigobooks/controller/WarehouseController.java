@@ -1,7 +1,5 @@
 package com.bigobooks.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class WarehouseController implements WarehousesApi {
 
     private final WarehouseService warehouseService;
-
-    @Value("${app.pagination.page-size:25}")
-    private int defaultPageSize;
-
-    @Value("${app.pagination.max-page-size:100}")
-    private int maxPageSize;
+    private final Pageables pageables;
 
     @Override
     public ResponseEntity<WarehouseListResponse> getWarehouses(String city, Integer page, Integer size) {
-        Page<WarehouseDto> result = warehouseService.findByCity(city, Pageables.of(page, size, defaultPageSize, maxPageSize));
+        Page<WarehouseDto> result = warehouseService.findByCity(city, pageables.of(page, size));
         return ResponseEntity.ok(new WarehouseListResponse()
                 .data(result.getContent())
                 .pagination(Envelopes.pagination(result)));
