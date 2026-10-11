@@ -1,4 +1,4 @@
-package com.bigobooks.controller;
+package com.bigobooks.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,13 @@ public class ControllerAdvice {
     public ResponseEntity<ErrorDto> runtimeExceptionHandler(RuntimeException ex) {
         ErrorDto error = new ErrorDto().message(ex.getMessage());
         log.warn("Error de ejecución: {}", ex.getMessage(), ex);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ErrorDto> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+        ErrorDto error = new ErrorDto().message(ex.getMessage());
+        log.warn("Error de argumentos: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
