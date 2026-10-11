@@ -14,15 +14,19 @@ import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.entities.book.Genre;
 import com.bigobooks.mappers.GenreMapper;
 import com.bigobooks.repositories.GenreRepository;
+import com.bigobooks.specifications.GenreSpecifications;
 
 @Service
 public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepository> {
 
     private final GenreMapper genreMapper;
+    private final GenreSpecifications genreSpecifications;
 
-    public GenreService(GenreRepository genreRepository, GenreMapper genreMapper) {
+    public GenreService(GenreRepository genreRepository, GenreMapper genreMapper,
+            GenreSpecifications genreSpecifications) {
         super(genreRepository);
         this.genreMapper = genreMapper;
+        this.genreSpecifications = genreSpecifications;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
 
     @Transactional
     public GenreDto create(GenreRequestDto dto) {
+        genreSpecifications.validateCreate(dto);
         Genre genre = new Genre();
         genre.setName(dto.getName());
         return genreMapper.toDto(repository.save(genre));
@@ -52,6 +57,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
 
     @Transactional
     public Optional<GenreDto> update(Long id, GenreRequestDto dto) {
+        genreSpecifications.validateUpdate(dto);
         return repository.findById(id).map(genre -> {
             genreMapper.update(dto, genre);
             return genreMapper.toDto(repository.save(genre));

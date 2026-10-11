@@ -22,6 +22,7 @@ import com.bigobooks.repositories.BookRepository;
 import com.bigobooks.repositories.StockAdjustmentDetailRepository;
 import com.bigobooks.repositories.StockAdjustmentRepository;
 import com.bigobooks.repositories.WarehouseRepository;
+import com.bigobooks.specifications.StockAdjustmentSpecifications;
 
 @Service
 public class StockAdjustmentService
@@ -32,17 +33,20 @@ public class StockAdjustmentService
     private final WarehouseRepository warehouseRepository;
     private final BookRepository bookRepository;
     private final StockAdjustmentMapper stockAdjustmentMapper;
+    private final StockAdjustmentSpecifications stockAdjustmentSpecifications;
 
     public StockAdjustmentService(StockAdjustmentRepository stockAdjustmentRepository,
             StockAdjustmentDetailRepository stockAdjustmentDetailRepository, StockService stockService,
             WarehouseRepository warehouseRepository, BookRepository bookRepository,
-            StockAdjustmentMapper stockAdjustmentMapper) {
+            StockAdjustmentMapper stockAdjustmentMapper,
+            StockAdjustmentSpecifications stockAdjustmentSpecifications) {
         super(stockAdjustmentRepository);
         this.stockAdjustmentDetailRepository = stockAdjustmentDetailRepository;
         this.stockService = stockService;
         this.warehouseRepository = warehouseRepository;
         this.bookRepository = bookRepository;
         this.stockAdjustmentMapper = stockAdjustmentMapper;
+        this.stockAdjustmentSpecifications = stockAdjustmentSpecifications;
     }
 
     @Override
@@ -62,8 +66,9 @@ public class StockAdjustmentService
 
     @Transactional
     public Optional<StockAdjustmentDto> create(Long warehouseId, StockAdjustmentRequestDto dto) {
+        stockAdjustmentSpecifications.validateCreate(dto);
         Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
-        if (warehouse.isEmpty() || dto.getDetails() == null || dto.getDetails().isEmpty()) {
+        if (warehouse.isEmpty()) {
             return Optional.empty();
         }
 

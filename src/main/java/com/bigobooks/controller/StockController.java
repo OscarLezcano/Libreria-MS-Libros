@@ -9,6 +9,7 @@ import com.bigobooks.dto.StockListResponse;
 import com.bigobooks.dto.StockResponse;
 import com.bigobooks.dto.StockQuantityRequestDto;
 import com.bigobooks.services.StockService;
+import com.bigobooks.specifications.StockSpecifications;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class StockController implements StocksApi {
 
     private final StockService stockService;
+    private final StockSpecifications stockSpecifications;
     private final Pageables pageables;
 
     @Override
@@ -47,6 +49,7 @@ public class StockController implements StocksApi {
     @Override
     public ResponseEntity<StockResponse> setStockQuantity(Long warehouseId, Long bookId,
             StockQuantityRequestDto stockQuantityRequestDto) {
+        stockSpecifications.validateCreate(stockQuantityRequestDto);
         return stockService.changeQuantity(warehouseId, bookId, stockQuantityRequestDto.getQuantity())
                 .map(stock -> ResponseEntity.ok(new StockResponse().data(stock)))
                 .orElseGet(() -> ResponseEntity.notFound().build());

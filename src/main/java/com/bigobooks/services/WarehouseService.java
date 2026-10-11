@@ -14,15 +14,19 @@ import com.bigobooks.dto.WarehouseRequestDto;
 import com.bigobooks.entities.stock.Warehouse;
 import com.bigobooks.mappers.WarehouseMapper;
 import com.bigobooks.repositories.WarehouseRepository;
+import com.bigobooks.specifications.WarehouseSpecifications;
 
 @Service
 public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDto, WarehouseRepository> {
 
     private final WarehouseMapper warehouseMapper;
+    private final WarehouseSpecifications warehouseSpecifications;
 
-    public WarehouseService(WarehouseRepository warehouseRepository, WarehouseMapper warehouseMapper) {
+    public WarehouseService(WarehouseRepository warehouseRepository, WarehouseMapper warehouseMapper,
+            WarehouseSpecifications warehouseSpecifications) {
         super(warehouseRepository);
         this.warehouseMapper = warehouseMapper;
+        this.warehouseSpecifications = warehouseSpecifications;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
 
     @Transactional
     public WarehouseDto create(WarehouseRequestDto dto) {
+        warehouseSpecifications.validateCreate(dto);
         Warehouse warehouse = new Warehouse();
         warehouseMapper.update(dto, warehouse);
         return warehouseMapper.toDto(repository.save(warehouse));
@@ -52,6 +57,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
 
     @Transactional
     public Optional<WarehouseDto> update(Long id, WarehouseRequestDto dto) {
+        warehouseSpecifications.validateUpdate(dto);
         return repository.findById(id).map(warehouse -> {
             warehouseMapper.update(dto, warehouse);
             return warehouseMapper.toDto(repository.save(warehouse));

@@ -14,18 +14,21 @@ import com.bigobooks.entities.stock.Warehouse;
 import com.bigobooks.mappers.StockMapper;
 import com.bigobooks.repositories.StockRepository;
 import com.bigobooks.repositories.WarehouseRepository;
+import com.bigobooks.specifications.StockSpecifications;
 
 @Service
 public class StockService extends AbstractCrudService<Stock, StockDto, StockRepository> {
 
     private final WarehouseRepository warehouseRepository;
     private final StockMapper stockMapper;
+    private final StockSpecifications stockSpecifications;
 
     public StockService(StockRepository stockRepository, WarehouseRepository warehouseRepository,
-            StockMapper stockMapper) {
+            StockMapper stockMapper, StockSpecifications stockSpecifications) {
         super(stockRepository);
         this.warehouseRepository = warehouseRepository;
         this.stockMapper = stockMapper;
+        this.stockSpecifications = stockSpecifications;
     }
 
     @Override
@@ -55,6 +58,7 @@ public class StockService extends AbstractCrudService<Stock, StockDto, StockRepo
 
     @Transactional
     public Optional<StockDto> setQuantity(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
         Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
         if (warehouse.isEmpty()) {
             return Optional.empty();
@@ -78,15 +82,16 @@ public class StockService extends AbstractCrudService<Stock, StockDto, StockRepo
         if (stock.getId() == null) {
             stock.setBookId(bookId);
             stock.setWarehouse(warehouse.get());
-            stock.setQuantity(delta);
-        } else {
-            stock.setQuantity(stock.getQuantity() + delta);
+            stock.setQuantity(0);
         }
+        stockSpecifications.validateResult(stock.getQuantity(), delta);
+        stock.setQuantity(stock.getQuantity() + delta);
         return Optional.of(stockMapper.toDto(repository.save(stock)));
     }
 
     @Transactional
     public Optional<StockDto> increase(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
         return repository.findByBookIdAndWarehouseId(bookId, warehouseId).map(stock -> {
             stock.setQuantity(stock.getQuantity() + quantity);
             return stockMapper.toDto(repository.save(stock));
@@ -95,7 +100,9 @@ public class StockService extends AbstractCrudService<Stock, StockDto, StockRepo
 
     @Transactional
     public Optional<StockDto> decrease(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
         return repository.findByBookIdAndWarehouseId(bookId, warehouseId).map(stock -> {
+            stockSpecifications.validateResult(stock.getQuantity(), -quantity);
             stock.setQuantity(stock.getQuantity() - quantity);
             return stockMapper.toDto(repository.save(stock));
         });

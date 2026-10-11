@@ -14,15 +14,19 @@ import com.bigobooks.dto.AuthorRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.mappers.AuthorMapper;
 import com.bigobooks.repositories.AuthorRepository;
+import com.bigobooks.specifications.AuthorSpecifications;
 
 @Service
 public class AuthorService extends AbstractCrudService<Author, AuthorDto, AuthorRepository> {
 
     private final AuthorMapper authorMapper;
+    private final AuthorSpecifications authorSpecifications;
 
-    public AuthorService(AuthorRepository authorRepository, AuthorMapper authorMapper) {
+    public AuthorService(AuthorRepository authorRepository, AuthorMapper authorMapper,
+            AuthorSpecifications authorSpecifications) {
         super(authorRepository);
         this.authorMapper = authorMapper;
+        this.authorSpecifications = authorSpecifications;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
 
     @Transactional
     public AuthorDto create(AuthorRequestDto dto) {
+        authorSpecifications.validateCreate(dto);
         Author author = new Author();
         author.setName(dto.getName());
         return authorMapper.toDto(repository.save(author));
@@ -52,6 +57,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
 
     @Transactional
     public Optional<AuthorDto> update(Long id, AuthorRequestDto dto) {
+        authorSpecifications.validateUpdate(dto);
         return repository.findById(id).map(author -> {
             authorMapper.update(dto, author);
             return authorMapper.toDto(repository.save(author));
