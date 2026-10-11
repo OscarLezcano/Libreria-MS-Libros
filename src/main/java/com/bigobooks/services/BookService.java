@@ -20,6 +20,7 @@ import com.bigobooks.mappers.BookMapper;
 import com.bigobooks.repositories.AuthorRepository;
 import com.bigobooks.repositories.BookRepository;
 import com.bigobooks.repositories.GenreRepository;
+import com.bigobooks.specifications.BookSpecifications;
 
 @Service
 public class BookService extends AbstractCrudService<Book, BookDto, BookRepository> {
@@ -27,13 +28,15 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
+    private final BookSpecifications bookSpecifications;
 
     public BookService(BookRepository bookRepository, GenreRepository genreRepository,
-            AuthorRepository authorRepository, BookMapper bookMapper) {
+            AuthorRepository authorRepository, BookMapper bookMapper, BookSpecifications bookSpecifications) {
         super(bookRepository);
         this.genreRepository = genreRepository;
         this.authorRepository = authorRepository;
         this.bookMapper = bookMapper;
+        this.bookSpecifications = bookSpecifications;
     }
 
     @Override
@@ -66,6 +69,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
 
     @Transactional
     public BookDto create(BookRequestDto dto) {
+        bookSpecifications.validateCreate(dto);
         Book book = new Book();
         bookMapper.update(dto, book);
         book.setGenres(resolveGenres(dto.getGenreIds()));
@@ -75,6 +79,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
 
     @Transactional
     public Optional<BookDto> update(Long id, BookRequestDto dto) {
+        bookSpecifications.validateUpdate(dto);
         return repository.findById(id).map(book -> {
             bookMapper.update(dto, book);
             if (dto.getGenreIds() != null) {
