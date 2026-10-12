@@ -13,13 +13,17 @@ import com.bigobooks.entities.stock.StockAdjustmentDetail;
 @Mapper(componentModel = "spring")
 public interface StockAdjustmentDetailMapper {
 
+    @Mapping(source = "book", target = "bookId")
     StockAdjustmentDetailDto toDto(StockAdjustmentDetail detail);
 
     List<StockAdjustmentDetailDto> toDtoList(List<StockAdjustmentDetail> details);
 
+    @Mapping(source = "bookId", target = "book")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "stockAdjustment", ignore = true)
+    @Mapping(target = "bookName", ignore = true)
+    @Mapping(target = "systemQuantity", ignore = true)
     void update(StockAdjustmentDetailRequestDto dto, @MappingTarget StockAdjustmentDetail detail);
 }

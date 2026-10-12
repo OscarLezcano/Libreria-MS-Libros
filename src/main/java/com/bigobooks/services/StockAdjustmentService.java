@@ -91,7 +91,7 @@ public class StockAdjustmentService
         List<StockAdjustmentDetail> entities = new ArrayList<>();
         for (StockAdjustmentDetailRequestDto detail : details) {
             StockAdjustmentDetail entity = new StockAdjustmentDetail();
-            entity.setBook(detail.getBook());
+            entity.setBook(detail.getBookId());
             entity.setPhysicalQuantity(detail.getPhysicalQuantity());
             entities.add(entity);
         }

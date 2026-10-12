@@ -9,7 +9,7 @@ public class StockAdjustmentDetailSpecifications extends Specification<StockAdju
 
     @Override
     public void validateCreate(StockAdjustmentDetailRequestDto dto) {
-        requireId(dto.getBook(), "book");
+        requireId(dto.getBookId(), "bookId");
         requireNotNull(dto.getPhysicalQuantity(), "physicalQuantity");
         inRange(0, Integer.MAX_VALUE, dto.getPhysicalQuantity());
     }
