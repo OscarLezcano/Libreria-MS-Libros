@@ -13,7 +13,7 @@ import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.book.Genre;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {GenreMapper.class, AuthorMapper.class})
 public interface BookMapper {
 
     @Mapping(source = "genres", target = "genreIds")
