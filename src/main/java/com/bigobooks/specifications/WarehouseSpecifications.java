@@ -12,7 +12,7 @@ public class WarehouseSpecifications extends Specification<WarehouseRequestDto> 
         requireText(dto.getName(), "name");
         requireText(dto.getAddress(), "address");
         requireText(dto.getCity(), "city");
-        requireTextIfPresent(dto.getPhone(), "phone");
+        requireText(dto.getPhone(), "phone");
     }
 
     @Override

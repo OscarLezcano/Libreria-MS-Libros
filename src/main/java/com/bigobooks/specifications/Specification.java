@@ -12,12 +12,6 @@ public abstract class Specification<T> {
         }
     }
 
-    protected void requireTextIfPresent(String value, String field) {
-        if (value != null && value.isBlank()) {
-            throw new IllegalArgumentException(field + " no puede estar vacio");
-        }
-    }
-
     protected void requireNotNull(Object value, String field) {
         if (value == null) {
             throw new IllegalArgumentException(field + " es obligatorio");
