@@ -15,6 +15,8 @@ import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
+import com.bigobooks.entities.book.BookAuthor;
+import com.bigobooks.entities.book.BookGenre;
 import com.bigobooks.entities.book.Genre;
 import com.bigobooks.mappers.BookMapper;
 import com.bigobooks.repositories.AuthorRepository;
@@ -59,12 +61,12 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByGenre(Long genreId, Pageable pageable) {
-        return repository.findByGenres_Id(genreId, pageable).map(bookMapper::toDto);
+        return repository.findByGenreId(genreId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByAuthor(Long authorId, Pageable pageable) {
-        return repository.findByAuthors_Id(authorId, pageable).map(bookMapper::toDto);
+        return repository.findByAuthorId(authorId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional
@@ -72,8 +74,8 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
         bookSpecifications.validateCreate(dto);
         Book book = new Book();
         bookMapper.update(dto, book);
-        book.setGenres(resolveGenres(dto.getGenreIds()));
-        book.setAuthors(resolveAuthors(dto.getAuthorIds()));
+        book.setGenres(resolveGenres(book, dto.getGenreIds()));
+        book.setAuthors(resolveAuthors(book, dto.getAuthorIds()));
         return bookMapper.toDto(repository.save(book));
     }
 
@@ -83,26 +85,40 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
         return repository.findById(id).map(book -> {
             bookMapper.update(dto, book);
             if (dto.getGenreIds() != null) {
-                book.setGenres(resolveGenres(dto.getGenreIds()));
+                book.setGenres(resolveGenres(book, dto.getGenreIds()));
             }
             if (dto.getAuthorIds() != null) {
-                book.setAuthors(resolveAuthors(dto.getAuthorIds()));
+                book.setAuthors(resolveAuthors(book, dto.getAuthorIds()));
             }
             return bookMapper.toDto(repository.save(book));
         });
     }
 
-    private List<Genre> resolveGenres(List<Long> genreIds) {
+    private List<BookGenre> resolveGenres(Book book, List<Long> genreIds) {
+        List<BookGenre> links = new ArrayList<>();
         if (genreIds == null || genreIds.isEmpty()) {
-            return new ArrayList<>();
+            return links;
         }
-        return new ArrayList<>(genreRepository.findAllById(genreIds));
+        for (Genre genre : genreRepository.findAllById(genreIds)) {
+            BookGenre link = new BookGenre();
+            link.setBook(book);
+            link.setGenre(genre);
+            links.add(link);
+        }
+        return links;
     }
 
-    private List<Author> resolveAuthors(List<Long> authorIds) {
+    private List<BookAuthor> resolveAuthors(Book book, List<Long> authorIds) {
+        List<BookAuthor> links = new ArrayList<>();
         if (authorIds == null || authorIds.isEmpty()) {
-            return new ArrayList<>();
+            return links;
         }
-        return new ArrayList<>(authorRepository.findAllById(authorIds));
+        for (Author author : authorRepository.findAllById(authorIds)) {
+            BookAuthor link = new BookAuthor();
+            link.setBook(book);
+            link.setAuthor(author);
+            links.add(link);
+        }
+        return links;
     }
 }

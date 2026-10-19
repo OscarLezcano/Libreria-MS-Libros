@@ -15,9 +15,11 @@ public interface BookRepository extends BaseRepository<Book> {
 
     Optional<Book> findByTitle(String title);
 
-    Page<Book> findByGenres_Id(Long genreId, Pageable pageable);
+    @Query("SELECT b FROM Book b JOIN b.genres bg WHERE bg.genre.id = :genreId")
+    Page<Book> findByGenreId(@Param("genreId") Long genreId, Pageable pageable);
 
-    Page<Book> findByAuthors_Id(Long authorId, Pageable pageable);
+    @Query("SELECT b FROM Book b JOIN b.authors ba WHERE ba.author.id = :authorId")
+    Page<Book> findByAuthorId(@Param("authorId") Long authorId, Pageable pageable);
 
     @Query("select b from Book b where lower(b.title) like lower(concat('%', :title, '%'))")
     Page<Book> searchByName(@Param("title") String title, Pageable pageable);

@@ -20,6 +20,6 @@ public interface AuthorMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "books", ignore = true)
+    @Mapping(target = "bookAuthors", ignore = true)
     void update(AuthorRequestDto dto, @MappingTarget Author author);
 }

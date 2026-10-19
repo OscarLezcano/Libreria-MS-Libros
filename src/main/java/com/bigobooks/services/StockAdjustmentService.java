@@ -56,12 +56,12 @@ public class StockAdjustmentService
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByWarehouse(Long warehouseId, Pageable pageable) {
-        return repository.findByWarehouse_Id(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByWarehouseId(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByBook(Long bookId, Pageable pageable) {
-        return repository.findByDetails_Book(bookId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByBookId(bookId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional
@@ -91,7 +91,7 @@ public class StockAdjustmentService
         List<StockAdjustmentDetail> entities = new ArrayList<>();
         for (StockAdjustmentDetailRequestDto detail : details) {
             StockAdjustmentDetail entity = new StockAdjustmentDetail();
-            entity.setBook(detail.getBookId());
+            entity.setBook(bookRepository.getReferenceById(detail.getBookId()));
             entity.setPhysicalQuantity(detail.getPhysicalQuantity());
             entities.add(entity);
         }
@@ -100,13 +100,17 @@ public class StockAdjustmentService
 
     private void prepareDetail(StockAdjustmentDetail detail, StockAdjustment adjustment, Long warehouseId) {
         detail.setStockAdjustment(adjustment);
-        Book book = bookRepository.findById(detail.getBook()).orElse(null);
+        Book book = detail.getBook();
+        if (book == null) {
+            new IllegalArgumentException("El libro no puede ser null");
+        }
         detail.setBookName(book == null ? null : book.getTitle());
-        detail.setSystemQuantity(stockService.totalQuantity(warehouseId, detail.getBook()));
+        detail.setSystemQuantity(stockService.totalQuantity(warehouseId, book.getId()));
     }
 
     private void applyPhysicalQuantities(StockAdjustment adjustment, Long warehouseId) {
-        adjustment.getDetails().forEach(detail -> stockService
-                .setQuantity(warehouseId, detail.getBook(), detail.getPhysicalQuantity()));
+        adjustment.getDetails()
+                .forEach(detail -> stockService.setQuantity(warehouseId, detail.getBook().getId(),
+                        detail.getPhysicalQuantity()));
     }
 }

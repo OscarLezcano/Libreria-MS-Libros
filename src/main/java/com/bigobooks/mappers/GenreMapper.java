@@ -20,6 +20,6 @@ public interface GenreMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "books", ignore = true)
+    @Mapping(target = "bookGenres", ignore = true)
     void update(GenreRequestDto dto, @MappingTarget Genre genre);
 }

@@ -9,9 +9,9 @@ import org.mapstruct.MappingTarget;
 
 import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookRequestDto;
-import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
-import com.bigobooks.entities.book.Genre;
+import com.bigobooks.entities.book.BookAuthor;
+import com.bigobooks.entities.book.BookGenre;
 
 @Mapper(componentModel = "spring", uses = {GenreMapper.class, AuthorMapper.class})
 public interface BookMapper {
@@ -30,11 +30,11 @@ public interface BookMapper {
     @Mapping(target = "wishlistedBy", ignore = true)
     void update(BookRequestDto dto, @MappingTarget Book book);
 
-    default List<Long> toGenreIds(List<Genre> genres) {
-        return genres == null ? new ArrayList<>() : genres.stream().map(Genre::getId).toList();
+    default List<Long> toGenreIds(List<BookGenre> genres) {
+        return genres == null ? new ArrayList<>() : genres.stream().map(link -> link.getGenre().getId()).toList();
     }
 
-    default List<Long> toAuthorIds(List<Author> authors) {
-        return authors == null ? new ArrayList<>() : authors.stream().map(Author::getId).toList();
+    default List<Long> toAuthorIds(List<BookAuthor> authors) {
+        return authors == null ? new ArrayList<>() : authors.stream().map(link -> link.getAuthor().getId()).toList();
     }
 }
