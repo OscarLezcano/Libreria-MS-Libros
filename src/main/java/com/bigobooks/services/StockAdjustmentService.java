@@ -98,6 +98,7 @@ public class StockAdjustmentService
         return entities;
     }
 
+    @SuppressWarnings("null")
     private void prepareDetail(StockAdjustmentDetail detail, StockAdjustment adjustment, Long warehouseId) {
         detail.setStockAdjustment(adjustment);
         Book book = detail.getBook();
