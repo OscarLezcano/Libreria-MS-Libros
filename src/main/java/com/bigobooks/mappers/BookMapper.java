@@ -7,13 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.bigobooks.dto.AuthorDto;
 import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookRequestDto;
+import com.bigobooks.dto.GenreDto;
 import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.book.BookAuthor;
 import com.bigobooks.entities.book.BookGenre;
 
-@Mapper(componentModel = "spring", uses = {GenreMapper.class, AuthorMapper.class})
+@Mapper(componentModel = "spring", uses = { GenreMapper.class, AuthorMapper.class })
 public interface BookMapper {
 
     @Mapping(source = "genres", target = "genreIds")
@@ -21,6 +23,16 @@ public interface BookMapper {
     BookDto toDto(Book book);
 
     List<BookDto> toDtoList(List<Book> books);
+
+    @Mapping(source = "genre.id", target = "id")
+    @Mapping(source = "genre.name", target = "name")
+    // @Mapping(source = "genre.createdAt", target = "createdAt")
+    GenreDto toDto(BookGenre bookGenre);
+
+    @Mapping(source = "author.id", target = "id")
+    @Mapping(source = "author.name", target = "name")
+    // @Mapping(source = "author.createdAt", target = "createdAt")
+    AuthorDto toDto(BookAuthor bookAuthor);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
