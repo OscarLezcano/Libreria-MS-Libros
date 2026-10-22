@@ -3,6 +3,8 @@ package com.bigobooks.services;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,11 +37,6 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
     }
 
     @Transactional(readOnly = true)
-    public Optional<WarehouseDto> findByName(String name) {
-        return repository.findByName(name).map(warehouseMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
     public Page<WarehouseDto> findByCity(String city, Pageable pageable) {
         if (!StringUtils.hasText(city)) {
             return getAll(pageable);
@@ -48,19 +45,30 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
     }
 
     @Transactional
+    @CachePut(value = "warehouse", key = "'warehouse_' + #result.id")
     public WarehouseDto create(WarehouseRequestDto dto) {
         warehouseSpecifications.validateCreate(dto);
         Warehouse warehouse = new Warehouse();
         warehouseMapper.update(dto, warehouse);
-        return warehouseMapper.toDto(repository.save(warehouse));
+        Warehouse saved = repository.save(warehouse);
+        return warehouseMapper.toDto(saved);
     }
 
     @Transactional
+    @CachePut(value = "warehouse", key = "'warehouse_' + #id", condition = "#result != null && #result.isPresent()")
     public Optional<WarehouseDto> update(Long id, WarehouseRequestDto dto) {
         warehouseSpecifications.validateUpdate(dto);
         return repository.findById(id).map(warehouse -> {
             warehouseMapper.update(dto, warehouse);
-            return warehouseMapper.toDto(repository.save(warehouse));
+            Warehouse saved = repository.save(warehouse);
+            return warehouseMapper.toDto(saved);
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "warehouse", key = "'warehouse_' + #id")
+    public Optional<WarehouseDto> getById(Long id) {
+        return super.getById(id);
     }
 }
