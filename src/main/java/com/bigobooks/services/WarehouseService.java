@@ -39,14 +39,6 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         return warehouseMapper::toDto;
     }
 
-    @Transactional(readOnly = true)
-    public Page<WarehouseDto> findByCity(String city, Pageable pageable) {
-        if (!StringUtils.hasText(city)) {
-            return getAll(pageable);
-        }
-        return repository.findByCity(city.trim(), pageable).map(warehouseMapper::toDto);
-    }
-
     @Transactional
     @CachePut(value = "warehouse", key = "'warehouse_' + #result.id")
     public WarehouseDto create(WarehouseRequestDto dto) {
@@ -55,6 +47,19 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         warehouseMapper.update(dto, warehouse);
         Warehouse saved = repository.save(warehouse);
         return warehouseMapper.toDto(saved);
+    }
+
+    @Transactional(readOnly = true)
+    // Configurar cache Manualmente
+    public Page<WarehouseDto> getAll(Pageable pageable) {
+        return repository.findAll(pageable).map(toDtoMapper());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "warehouse", key = "'warehouse_' + #id")
+    public Optional<WarehouseDto> getById(Long id) {
+        return super.getById(id);
     }
 
     @Transactional
@@ -68,10 +73,17 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         });
     }
 
-    @Override
+    @Transactional
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
-    @Cacheable(value = "warehouse", key = "'warehouse_' + #id")
-    public Optional<WarehouseDto> getById(Long id) {
-        return super.getById(id);
+    // Este al hacer getAll nomas va utilizar el cache xd
+    public Page<WarehouseDto> findByCity(String city, Pageable pageable) {
+        if (!StringUtils.hasText(city)) {
+            return getAll(pageable);
+        }
+        return repository.findByCity(city.trim(), pageable).map(warehouseMapper::toDto);
     }
 }
