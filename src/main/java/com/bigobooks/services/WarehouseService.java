@@ -1,12 +1,15 @@
 package com.bigobooks.services;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +21,16 @@ import com.bigobooks.entities.stock.Warehouse;
 import com.bigobooks.mappers.WarehouseMapper;
 import com.bigobooks.repositories.WarehouseRepository;
 import com.bigobooks.specifications.WarehouseSpecifications;
+import org.springframework.cache.Cache;
 
 @Service
 public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDto, WarehouseRepository> {
 
     private final WarehouseMapper warehouseMapper;
     private final WarehouseSpecifications warehouseSpecifications;
+    @SuppressWarnings("unused")
     private final CacheManager cacheManager;
+    private final Cache cache;
 
     public WarehouseService(WarehouseRepository warehouseRepository, WarehouseMapper warehouseMapper,
             WarehouseSpecifications warehouseSpecifications, CacheManager cacheManager) {
@@ -32,6 +38,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         this.warehouseMapper = warehouseMapper;
         this.warehouseSpecifications = warehouseSpecifications;
         this.cacheManager = cacheManager;
+        this.cache = cacheManager.getCache("warehouse");
     }
 
     @Override
@@ -40,7 +47,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
     }
 
     @Transactional
-    @CachePut(value = "warehouse", key = "'warehouse_' + #result.id")
+    @CachePut(value = "warehouse", key = "'warehouse_' + #result.id", condition = "#result.id != null")
     public WarehouseDto create(WarehouseRequestDto dto) {
         warehouseSpecifications.validateCreate(dto);
         Warehouse warehouse = new Warehouse();
@@ -49,10 +56,31 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         return warehouseMapper.toDto(saved);
     }
 
+    @Override
     @Transactional(readOnly = true)
-    // Configurar cache Manualmente
     public Page<WarehouseDto> getAll(Pageable pageable) {
-        return repository.findAll(pageable).map(toDtoMapper());
+        Page<Long> idPage = repository.findAllIds(pageable);
+        ArrayList<WarehouseDto> warehouses = new ArrayList<>(idPage.getNumberOfElements());
+
+        for (Long id : idPage.getContent()) {
+            String cacheKey = "warehouse_" + id;
+            WarehouseDto cached = cache.get(cacheKey, WarehouseDto.class);
+
+            // Si esta en el cache retorno del cache directemente
+            // si no lo busco en la db y lo agrego
+            if (cached != null) {
+                warehouses.add(cached);
+                continue;
+            }
+
+            getById(id).ifPresent(warehouse -> {
+                cache.put(cacheKey, warehouse);
+                warehouses.add(warehouse);
+            });
+
+        }
+
+        return new PageImpl<>(warehouses, pageable, idPage.getTotalElements());
     }
 
     @Override
@@ -73,9 +101,11 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         });
     }
 
+    @Override
     @Transactional
+    @CacheEvict(value = "warehouse", key = "'warehouse_' + #id")
     public void delete(Long id) {
-        repository.deleteById(id);
+        super.delete(id);
     }
 
     @Transactional(readOnly = true)
