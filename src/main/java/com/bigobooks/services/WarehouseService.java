@@ -3,6 +3,7 @@ package com.bigobooks.services;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -23,12 +24,14 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
 
     private final WarehouseMapper warehouseMapper;
     private final WarehouseSpecifications warehouseSpecifications;
+    private final CacheManager cacheManager;
 
     public WarehouseService(WarehouseRepository warehouseRepository, WarehouseMapper warehouseMapper,
-            WarehouseSpecifications warehouseSpecifications) {
+            WarehouseSpecifications warehouseSpecifications, CacheManager cacheManager) {
         super(warehouseRepository);
         this.warehouseMapper = warehouseMapper;
         this.warehouseSpecifications = warehouseSpecifications;
+        this.cacheManager = cacheManager;
     }
 
     @Override
