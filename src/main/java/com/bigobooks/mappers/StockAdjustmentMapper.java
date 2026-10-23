@@ -1,5 +1,6 @@
 package com.bigobooks.mappers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -9,13 +10,20 @@ import org.mapstruct.MappingTarget;
 import com.bigobooks.dto.StockAdjustmentDto;
 import com.bigobooks.dto.StockAdjustmentRequestDto;
 import com.bigobooks.entities.stock.StockAdjustment;
+import com.bigobooks.entities.stock.StockAdjustmentDetail;
 
-@Mapper(componentModel = "spring", uses = StockAdjustmentDetailMapper.class)
+@Mapper(componentModel = "spring")
 public interface StockAdjustmentMapper {
 
+    @Mapping(source = "details", target = "detailIds")
     StockAdjustmentDto toDto(StockAdjustment stockAdjustment);
 
     List<StockAdjustmentDto> toDtoList(List<StockAdjustment> stockAdjustments);
+
+    default List<Long> toDetailIds(List<StockAdjustmentDetail> details) {
+        return details == null ? new ArrayList<>()
+                : details.stream().map(StockAdjustmentDetail::getId).toList();
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

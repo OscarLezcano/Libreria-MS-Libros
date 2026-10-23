@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigobooks.dto.StockAdjustmentDetailListResponse;
 import com.bigobooks.dto.StockAdjustmentDto;
 import com.bigobooks.dto.StockAdjustmentListResponse;
 import com.bigobooks.dto.StockAdjustmentRequestDto;
@@ -26,6 +27,13 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
     public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
         return stockAdjustmentService.getById(id)
                 .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public ResponseEntity<StockAdjustmentDetailListResponse> getStockAdjustmentDetails(Long id) {
+        return stockAdjustmentService.getDetails(id)
+                .map(details -> ResponseEntity.ok(new StockAdjustmentDetailListResponse().data(details)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
