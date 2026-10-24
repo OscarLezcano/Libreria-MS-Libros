@@ -12,6 +12,9 @@ import com.bigobooks.repository.BaseRepository;
 
 public interface GenreRepository extends BaseRepository<Genre> {
 
+    @Query("SELECT g.id FROM Genre g")
+    Page<Long> findAllIds(Pageable pageable);
+
     Optional<Genre> findByName(String name);
 
     @Query("select b from Genre b where lower(b.name) like lower(concat('%', :name, '%'))")

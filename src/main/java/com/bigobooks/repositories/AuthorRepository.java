@@ -12,6 +12,9 @@ import com.bigobooks.repository.BaseRepository;
 
 public interface AuthorRepository extends BaseRepository<Author> {
 
+    @Query("SELECT a.id FROM Author a")
+    Page<Long> findAllIds(Pageable pageable);
+
     Optional<Author> findByName(String name);
 
     @Query("select b from Author b where lower(b.name) like lower(concat('%', :name, '%'))")
