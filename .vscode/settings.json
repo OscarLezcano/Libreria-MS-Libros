@@ -1,8 +1,8 @@
-{
-	"java.compile.nullAnalysis.mode": "automatic",
-	"java.configuration.updateBuildConfiguration": "automatic",
-	"java.project.sourcePaths": [
-		"src/main/java"
-	],
-	"cSpell.language": "en,es-ES"
-}
+// {
+// 	"java.compile.nullAnalysis.mode": "automatic",
+// 	"java.configuration.updateBuildConfiguration": "automatic",
+// 	"java.project.sourcePaths": [
+// 		"src/main/java"
+// 	],
+// 	"cSpell.language": "en,es-ES"
+// }
