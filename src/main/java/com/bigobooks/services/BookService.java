@@ -5,7 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,19 +37,53 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
     private final BookSpecifications bookSpecifications;
+    private final Cache cache;
 
     public BookService(BookRepository bookRepository, GenreRepository genreRepository,
-            AuthorRepository authorRepository, BookMapper bookMapper, BookSpecifications bookSpecifications) {
+            AuthorRepository authorRepository, BookMapper bookMapper, BookSpecifications bookSpecifications,
+            CacheManager cacheManager) {
         super(bookRepository);
         this.genreRepository = genreRepository;
         this.authorRepository = authorRepository;
         this.bookMapper = bookMapper;
         this.bookSpecifications = bookSpecifications;
+        this.cache = cacheManager.getCache("book");
     }
 
     @Override
     protected Function<Book, BookDto> toDtoMapper() {
         return bookMapper::toDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookDto> getAll(Pageable pageable) {
+        Page<Long> idPage = repository.findAllIds(pageable);
+        ArrayList<BookDto> books = new ArrayList<>(idPage.getNumberOfElements());
+
+        for (Long id : idPage.getContent()) {
+            String cacheKey = "book_" + id;
+            BookDto cached = cache.get(cacheKey, BookDto.class);
+
+            if (cached != null) {
+                books.add(cached);
+                continue;
+            }
+
+            getById(id).ifPresent(book -> {
+                cache.put(cacheKey, book);
+                books.add(book);
+            });
+        }
+
+        return new PageImpl<>(books, pageable, idPage.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "book", key = "'book_' + #id")
+    public Optional<BookDto> getById(Long id) {
+        return super.getById(id);
     }
 
     @Transactional(readOnly = true)
@@ -70,6 +110,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     }
 
     @Transactional
+    @CachePut(value = "book", key = "'book_' + #result.id", condition = "#result.id != null")
     public BookDto create(BookRequestDto dto) {
         bookSpecifications.validateCreate(dto);
         Book book = new Book();
@@ -80,6 +121,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     }
 
     @Transactional
+    @CachePut(value = "book", key = "'book_' + #id", condition = "#result != null && #result.isPresent()")
     public Optional<BookDto> update(Long id, BookRequestDto dto) {
         bookSpecifications.validateUpdate(dto);
         return repository.findById(id).map(book -> {
@@ -92,6 +134,13 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
             }
             return bookMapper.toDto(repository.save(book));
         });
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "book", key = "'book_' + #id")
+    public void delete(Long id) {
+        super.delete(id);
     }
 
     private List<BookGenre> resolveGenres(Book book, List<Long> genreIds) {

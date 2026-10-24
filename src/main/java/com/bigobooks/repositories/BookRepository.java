@@ -13,6 +13,9 @@ import com.bigobooks.repository.BaseRepository;
 
 public interface BookRepository extends BaseRepository<Book> {
 
+    @Query("SELECT b.id FROM Book b")
+    Page<Long> findAllIds(Pageable pageable);
+
     Optional<Book> findByTitle(String title);
 
     @Query("SELECT b FROM Book b JOIN b.genres bg WHERE bg.genre.id = :genreId")
