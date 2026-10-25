@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.bigobooks.dto.AuthorDto;
 import com.bigobooks.dto.AuthorRequestDto;
 import com.bigobooks.entities.book.Author;
@@ -24,6 +26,7 @@ import com.bigobooks.repositories.AuthorRepository;
 import com.bigobooks.specifications.AuthorSpecifications;
 
 @Service
+@Slf4j
 public class AuthorService extends AbstractCrudService<Author, AuthorDto, AuthorRepository> {
 
     private final AuthorMapper authorMapper;
@@ -52,6 +55,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
         for (Long id : idPage.getContent()) {
             String cacheKey = "author_" + id;
             AuthorDto cached = cache.get(cacheKey, AuthorDto.class);
+            log.debug("Cache GET cache=author key={} result={}", cacheKey, cached == null ? "MISS" : "HIT");
 
             if (cached != null) {
                 authors.add(cached);
@@ -60,6 +64,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
 
             getById(id).ifPresent(author -> {
                 cache.put(cacheKey, author);
+                log.debug("Cache PUT cache=author key={}", cacheKey);
                 authors.add(author);
             });
         }

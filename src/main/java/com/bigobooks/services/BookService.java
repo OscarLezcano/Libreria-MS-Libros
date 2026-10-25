@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.entities.book.Author;
@@ -31,6 +33,7 @@ import com.bigobooks.repositories.GenreRepository;
 import com.bigobooks.specifications.BookSpecifications;
 
 @Service
+@Slf4j
 public class BookService extends AbstractCrudService<Book, BookDto, BookRepository> {
 
     private final GenreRepository genreRepository;
@@ -64,6 +67,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
         for (Long id : idPage.getContent()) {
             String cacheKey = "book_" + id;
             BookDto cached = cache.get(cacheKey, BookDto.class);
+            log.debug("Cache GET cache=book key={} result={}", cacheKey, cached == null ? "MISS" : "HIT");
 
             if (cached != null) {
                 books.add(cached);
@@ -72,6 +76,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
 
             getById(id).ifPresent(book -> {
                 cache.put(cacheKey, book);
+                log.debug("Cache PUT cache=book key={}", cacheKey);
                 books.add(book);
             });
         }

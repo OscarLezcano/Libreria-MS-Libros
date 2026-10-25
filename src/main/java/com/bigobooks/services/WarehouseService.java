@@ -22,8 +22,10 @@ import com.bigobooks.mappers.WarehouseMapper;
 import com.bigobooks.repositories.WarehouseRepository;
 import com.bigobooks.specifications.WarehouseSpecifications;
 import org.springframework.cache.Cache;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDto, WarehouseRepository> {
 
     private final WarehouseMapper warehouseMapper;
@@ -65,6 +67,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
         for (Long id : idPage.getContent()) {
             String cacheKey = "warehouse_" + id;
             WarehouseDto cached = cache.get(cacheKey, WarehouseDto.class);
+            log.debug("Cache GET cache=warehouse key={} result={}", cacheKey, cached == null ? "MISS" : "HIT");
 
             // Si esta en el cache retorno del cache directemente
             // si no lo busco en la db y lo agrego
@@ -75,6 +78,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
 
             getById(id).ifPresent(warehouse -> {
                 cache.put(cacheKey, warehouse);
+                log.debug("Cache PUT cache=warehouse key={}", cacheKey);
                 warehouses.add(warehouse);
             });
 

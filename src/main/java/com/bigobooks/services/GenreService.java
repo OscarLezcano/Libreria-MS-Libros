@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.bigobooks.dto.GenreDto;
 import com.bigobooks.dto.GenreRequestDto;
 import com.bigobooks.entities.book.Genre;
@@ -24,6 +26,7 @@ import com.bigobooks.repositories.GenreRepository;
 import com.bigobooks.specifications.GenreSpecifications;
 
 @Service
+@Slf4j
 public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepository> {
 
     private final GenreMapper genreMapper;
@@ -52,6 +55,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
         for (Long id : idPage.getContent()) {
             String cacheKey = "genre_" + id;
             GenreDto cached = cache.get(cacheKey, GenreDto.class);
+            log.debug("Cache GET cache=genre key={} result={}", cacheKey, cached == null ? "MISS" : "HIT");
 
             if (cached != null) {
                 genres.add(cached);
@@ -60,6 +64,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
 
             getById(id).ifPresent(genre -> {
                 cache.put(cacheKey, genre);
+                log.debug("Cache PUT cache=genre key={}", cacheKey);
                 genres.add(genre);
             });
         }
