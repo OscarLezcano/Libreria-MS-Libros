@@ -126,7 +126,7 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     }
 
     @Transactional
-    @CachePut(value = "book", key = "'book_' + #id", condition = "#result != null && #result.isPresent()")
+    @CachePut(value = "book", key = "'book_' + #id", condition = "#result != null")
     public Optional<BookDto> update(Long id, BookRequestDto dto) {
         bookSpecifications.validateUpdate(dto);
         return repository.findById(id).map(book -> {

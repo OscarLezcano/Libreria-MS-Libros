@@ -95,7 +95,7 @@ public class WarehouseService extends AbstractCrudService<Warehouse, WarehouseDt
     }
 
     @Transactional
-    @CachePut(value = "warehouse", key = "'warehouse_' + #id", condition = "#result != null && #result.isPresent()")
+    @CachePut(value = "warehouse", key = "'warehouse_' + #id", condition = "#result != null")
     public Optional<WarehouseDto> update(Long id, WarehouseRequestDto dto) {
         warehouseSpecifications.validateUpdate(dto);
         return repository.findById(id).map(warehouse -> {

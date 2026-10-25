@@ -102,7 +102,7 @@ public class GenreService extends AbstractCrudService<Genre, GenreDto, GenreRepo
     }
 
     @Transactional
-    @CachePut(value = "genre", key = "'genre_' + #id", condition = "#result != null && #result.isPresent()")
+    @CachePut(value = "genre", key = "'genre_' + #id", condition = "#result != null")
     public Optional<GenreDto> update(Long id, GenreRequestDto dto) {
         genreSpecifications.validateUpdate(dto);
         return repository.findById(id).map(genre -> {

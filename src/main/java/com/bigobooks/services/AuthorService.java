@@ -102,7 +102,7 @@ public class AuthorService extends AbstractCrudService<Author, AuthorDto, Author
     }
 
     @Transactional
-    @CachePut(value = "author", key = "'author_' + #id", condition = "#result != null && #result.isPresent()")
+    @CachePut(value = "author", key = "'author_' + #id", condition = "#result != null")
     public Optional<AuthorDto> update(Long id, AuthorRequestDto dto) {
         authorSpecifications.validateUpdate(dto);
         return repository.findById(id).map(author -> {

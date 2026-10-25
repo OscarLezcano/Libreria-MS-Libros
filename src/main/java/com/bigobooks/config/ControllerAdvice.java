@@ -2,6 +2,7 @@ package com.bigobooks.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,6 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class ControllerAdvice {
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ErrorDto> accessDeniedExceptionHandler(AccessDeniedException ex) {
+        ErrorDto error = new ErrorDto().message("No posees los permisos nesarios para acceder a este recurso");
+        log.warn("Acceso denegado: {}", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<ErrorDto> runtimeExceptionHandler(RuntimeException ex) {
         ErrorDto error = new ErrorDto().message("Internal Server Error");
