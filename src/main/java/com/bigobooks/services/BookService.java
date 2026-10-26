@@ -5,16 +5,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.bigobooks.dto.BookDto;
 import com.bigobooks.dto.BookRequestDto;
 import com.bigobooks.entities.book.Author;
 import com.bigobooks.entities.book.Book;
+import com.bigobooks.entities.book.BookAuthor;
+import com.bigobooks.entities.book.BookGenre;
 import com.bigobooks.entities.book.Genre;
 import com.bigobooks.mappers.BookMapper;
 import com.bigobooks.repositories.AuthorRepository;
@@ -23,25 +33,62 @@ import com.bigobooks.repositories.GenreRepository;
 import com.bigobooks.specifications.BookSpecifications;
 
 @Service
+@Slf4j
 public class BookService extends AbstractCrudService<Book, BookDto, BookRepository> {
 
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
     private final BookSpecifications bookSpecifications;
+    private final Cache cache;
 
     public BookService(BookRepository bookRepository, GenreRepository genreRepository,
-            AuthorRepository authorRepository, BookMapper bookMapper, BookSpecifications bookSpecifications) {
+            AuthorRepository authorRepository, BookMapper bookMapper, BookSpecifications bookSpecifications,
+            CacheManager cacheManager) {
         super(bookRepository);
         this.genreRepository = genreRepository;
         this.authorRepository = authorRepository;
         this.bookMapper = bookMapper;
         this.bookSpecifications = bookSpecifications;
+        this.cache = cacheManager.getCache("book");
     }
 
     @Override
     protected Function<Book, BookDto> toDtoMapper() {
         return bookMapper::toDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookDto> getAll(Pageable pageable) {
+        Page<Long> idPage = repository.findAllIds(pageable);
+        ArrayList<BookDto> books = new ArrayList<>(idPage.getNumberOfElements());
+
+        for (Long id : idPage.getContent()) {
+            String cacheKey = "book_" + id;
+            BookDto cached = cache.get(cacheKey, BookDto.class);
+            log.debug("Cache GET cache=book key={} result={}", cacheKey, cached == null ? "MISS" : "HIT");
+
+            if (cached != null) {
+                books.add(cached);
+                continue;
+            }
+
+            getById(id).ifPresent(book -> {
+                cache.put(cacheKey, book);
+                log.debug("Cache PUT cache=book key={}", cacheKey);
+                books.add(book);
+            });
+        }
+
+        return new PageImpl<>(books, pageable, idPage.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "book", key = "'book_' + #id")
+    public Optional<BookDto> getById(Long id) {
+        return super.getById(id);
     }
 
     @Transactional(readOnly = true)
@@ -59,50 +106,73 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByGenre(Long genreId, Pageable pageable) {
-        return repository.findByGenres_Id(genreId, pageable).map(bookMapper::toDto);
+        return repository.findByGenreId(genreId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<BookDto> getByAuthor(Long authorId, Pageable pageable) {
-        return repository.findByAuthors_Id(authorId, pageable).map(bookMapper::toDto);
+        return repository.findByAuthorId(authorId, pageable).map(bookMapper::toDto);
     }
 
     @Transactional
+    @CachePut(value = "book", key = "'book_' + #result.id", condition = "#result.id != null")
     public BookDto create(BookRequestDto dto) {
         bookSpecifications.validateCreate(dto);
         Book book = new Book();
         bookMapper.update(dto, book);
-        book.setGenres(resolveGenres(dto.getGenreIds()));
-        book.setAuthors(resolveAuthors(dto.getAuthorIds()));
+        book.setGenres(resolveGenres(book, dto.getGenreIds()));
+        book.setAuthors(resolveAuthors(book, dto.getAuthorIds()));
         return bookMapper.toDto(repository.save(book));
     }
 
     @Transactional
+    @CachePut(value = "book", key = "'book_' + #id", condition = "#result != null")
     public Optional<BookDto> update(Long id, BookRequestDto dto) {
         bookSpecifications.validateUpdate(dto);
         return repository.findById(id).map(book -> {
             bookMapper.update(dto, book);
             if (dto.getGenreIds() != null) {
-                book.setGenres(resolveGenres(dto.getGenreIds()));
+                book.setGenres(resolveGenres(book, dto.getGenreIds()));
             }
             if (dto.getAuthorIds() != null) {
-                book.setAuthors(resolveAuthors(dto.getAuthorIds()));
+                book.setAuthors(resolveAuthors(book, dto.getAuthorIds()));
             }
             return bookMapper.toDto(repository.save(book));
         });
     }
 
-    private List<Genre> resolveGenres(List<Long> genreIds) {
-        if (genreIds == null || genreIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(genreRepository.findAllById(genreIds));
+    @Override
+    @Transactional
+    @CacheEvict(value = "book", key = "'book_' + #id")
+    public void delete(Long id) {
+        super.delete(id);
     }
 
-    private List<Author> resolveAuthors(List<Long> authorIds) {
-        if (authorIds == null || authorIds.isEmpty()) {
-            return new ArrayList<>();
+    private List<BookGenre> resolveGenres(Book book, List<Long> genreIds) {
+        List<BookGenre> links = new ArrayList<>();
+        if (genreIds == null || genreIds.isEmpty()) {
+            return links;
         }
-        return new ArrayList<>(authorRepository.findAllById(authorIds));
+        for (Genre genre : genreRepository.findAllById(genreIds)) {
+            BookGenre link = new BookGenre();
+            link.setBook(book);
+            link.setGenre(genre);
+            links.add(link);
+        }
+        return links;
+    }
+
+    private List<BookAuthor> resolveAuthors(Book book, List<Long> authorIds) {
+        List<BookAuthor> links = new ArrayList<>();
+        if (authorIds == null || authorIds.isEmpty()) {
+            return links;
+        }
+        for (Author author : authorRepository.findAllById(authorIds)) {
+            BookAuthor link = new BookAuthor();
+            link.setBook(book);
+            link.setAuthor(author);
+            links.add(link);
+        }
+        return links;
     }
 }

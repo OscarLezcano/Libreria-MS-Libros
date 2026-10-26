@@ -3,6 +3,7 @@ package com.bigobooks.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.GenreDto;
@@ -38,12 +39,14 @@ public class GenreController implements GenresApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GenreResponse> createGenre(GenreRequestDto genreRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new GenreResponse().data(genreService.create(genreRequestDto)));
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GenreResponse> updateGenre(Long id, GenreRequestDto genreRequestDto) {
         return genreService.update(id, genreRequestDto)
                 .map(genre -> ResponseEntity.ok(new GenreResponse().data(genre)))
@@ -51,6 +54,7 @@ public class GenreController implements GenresApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteGenre(Long id) {
         genreService.delete(id);
         return ResponseEntity.noContent().build();

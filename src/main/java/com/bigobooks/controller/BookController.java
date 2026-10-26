@@ -3,6 +3,7 @@ package com.bigobooks.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bigobooks.dto.BookDto;
@@ -55,12 +56,14 @@ public class BookController implements BooksApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookResponse> createBook(BookRequestDto bookRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BookResponse().data(bookService.create(bookRequestDto)));
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BookResponse> updateBook(Long id, BookRequestDto bookRequestDto) {
         return bookService.update(id, bookRequestDto)
                 .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
@@ -68,6 +71,7 @@ public class BookController implements BooksApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteBook(Long id) {
         bookService.delete(id);
         return ResponseEntity.noContent().build();

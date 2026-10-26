@@ -16,18 +16,21 @@ import jakarta.persistence.LockModeType;
 
 public interface StockRepository extends BaseRepository<Stock> {
 
-    Optional<Stock> findByBookIdAndWarehouse_Id(Long bookId, Long warehouseId);
-
-    Page<Stock> findByBookId(Long bookId, Pageable pageable);
-
-    Page<Stock> findByWarehouse_Id(Long warehouseId, Pageable pageable);
+    @Query("select s from Stock s where s.book.id = :bookId and s.warehouse.id = :warehouseId")
+    Optional<Stock> findByBookIdAndWarehouseId(@Param("bookId") Long bookId, @Param("warehouseId") Long warehouseId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select s from Stock s where s.bookId = :bookId and s.warehouse.id = :warehouseId")
-    Optional<Stock> findByBookIdAndWarehouseId(@Param("bookId") Long bookId,
+    @Query("select s from Stock s where s.book.id = :bookId and s.warehouse.id = :warehouseId")
+    Optional<Stock> findByBookIdAndWarehouseIdForUpdate(@Param("bookId") Long bookId,
             @Param("warehouseId") Long warehouseId);
 
-    @Query("select coalesce(sum(s.quantity), 0) from Stock s where s.bookId = :bookId and s.warehouse.id = :warehouseId")
+    @Query("select s from Stock s where s.book.id = :bookId")
+    Page<Stock> findByBookId(@Param("bookId") Long bookId, Pageable pageable);
+
+    @Query("select s from Stock s where s.warehouse.id = :warehouseId")
+    Page<Stock> findByWarehouseId(@Param("warehouseId") Long warehouseId, Pageable pageable);
+
+    @Query("select coalesce(sum(s.quantity), 0) from Stock s where s.book.id = :bookId and s.warehouse.id = :warehouseId")
     int sumQuantityByBookIdAndWarehouseId(@Param("bookId") Long bookId, @Param("warehouseId") Long warehouseId);
 
     @Query(value = "SELECT * FROM stock WHERE is_deleted = true", nativeQuery = true)

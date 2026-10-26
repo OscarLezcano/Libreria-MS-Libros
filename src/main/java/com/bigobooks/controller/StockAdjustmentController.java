@@ -3,8 +3,10 @@ package com.bigobooks.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bigobooks.dto.StockAdjustmentDetailListResponse;
 import com.bigobooks.dto.StockAdjustmentDto;
 import com.bigobooks.dto.StockAdjustmentListResponse;
 import com.bigobooks.dto.StockAdjustmentRequestDto;
@@ -19,30 +21,45 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StockAdjustmentController implements StockAdjustmentsApi {
 
-    private final StockAdjustmentService stockAdjustmentService;
-    private final Pageables pageables;
+        private final StockAdjustmentService stockAdjustmentService;
+        private final Pageables pageables;
 
-    @Override
-    public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
-        return stockAdjustmentService.getById(id)
-                .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+        @Override
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
+                return stockAdjustmentService.getById(id)
+                                .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
+                                .orElseGet(() -> ResponseEntity.notFound().build());
+        }
 
-    @Override
-    public ResponseEntity<StockAdjustmentListResponse> getStockAdjustmentsByWarehouse(Long warehouseId, Integer page,
-            Integer size) {
-        Page<StockAdjustmentDto> result = stockAdjustmentService.getByWarehouse(warehouseId, pageables.of(page, size));
-        return ResponseEntity.ok(new StockAdjustmentListResponse()
-                .data(result.getContent())
-                .pagination(Envelopes.pagination(result)));
-    }
+        @Override
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<StockAdjustmentDetailListResponse> getStockAdjustmentDetails(Long id) {
+                return stockAdjustmentService.getDetails(id)
+                                .map(details -> ResponseEntity
+                                                .ok(new StockAdjustmentDetailListResponse().data(details)))
+                                .orElseGet(() -> ResponseEntity.notFound().build());
+        }
 
-    @Override
-    public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId,
-            StockAdjustmentRequestDto stockAdjustmentRequestDto) {
-        return stockAdjustmentService.create(warehouseId, stockAdjustmentRequestDto)
-                .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED).body(new StockAdjustmentResponse().data(adjustment)))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
+        @Override
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<StockAdjustmentListResponse> getStockAdjustmentsByWarehouse(Long warehouseId,
+                        Integer page,
+                        Integer size) {
+                Page<StockAdjustmentDto> result = stockAdjustmentService.getByWarehouse(warehouseId,
+                                pageables.of(page, size));
+                return ResponseEntity.ok(new StockAdjustmentListResponse()
+                                .data(result.getContent())
+                                .pagination(Envelopes.pagination(result)));
+        }
+
+        @Override
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId,
+                        StockAdjustmentRequestDto stockAdjustmentRequestDto) {
+                return stockAdjustmentService.create(warehouseId, stockAdjustmentRequestDto)
+                                .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED)
+                                                .body(new StockAdjustmentResponse().data(adjustment)))
+                                .orElseGet(() -> ResponseEntity.badRequest().build());
+        }
 }

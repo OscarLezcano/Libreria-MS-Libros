@@ -641,6 +641,27 @@ paths:
                 $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
         '404':
           description: Stock adjustment not found
+  /stock-adjustments/{id}/details:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock adjustment details found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentDetailListResponse'
+        '404':
+          description: Stock adjustment not found
   /stock-adjustments/warehouse/{warehouseId}:
     get:
       tags:

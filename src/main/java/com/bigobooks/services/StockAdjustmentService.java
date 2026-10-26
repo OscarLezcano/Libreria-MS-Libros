@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bigobooks.dto.StockAdjustmentDetailDto;
 import com.bigobooks.dto.StockAdjustmentDetailRequestDto;
 import com.bigobooks.dto.StockAdjustmentDto;
 import com.bigobooks.dto.StockAdjustmentRequestDto;
@@ -17,6 +18,7 @@ import com.bigobooks.entities.book.Book;
 import com.bigobooks.entities.stock.StockAdjustment;
 import com.bigobooks.entities.stock.StockAdjustmentDetail;
 import com.bigobooks.entities.stock.Warehouse;
+import com.bigobooks.mappers.StockAdjustmentDetailMapper;
 import com.bigobooks.mappers.StockAdjustmentMapper;
 import com.bigobooks.repositories.BookRepository;
 import com.bigobooks.repositories.StockAdjustmentDetailRepository;
@@ -33,12 +35,14 @@ public class StockAdjustmentService
     private final WarehouseRepository warehouseRepository;
     private final BookRepository bookRepository;
     private final StockAdjustmentMapper stockAdjustmentMapper;
+    private final StockAdjustmentDetailMapper stockAdjustmentDetailMapper;
     private final StockAdjustmentSpecifications stockAdjustmentSpecifications;
 
     public StockAdjustmentService(StockAdjustmentRepository stockAdjustmentRepository,
             StockAdjustmentDetailRepository stockAdjustmentDetailRepository, StockService stockService,
             WarehouseRepository warehouseRepository, BookRepository bookRepository,
             StockAdjustmentMapper stockAdjustmentMapper,
+            StockAdjustmentDetailMapper stockAdjustmentDetailMapper,
             StockAdjustmentSpecifications stockAdjustmentSpecifications) {
         super(stockAdjustmentRepository);
         this.stockAdjustmentDetailRepository = stockAdjustmentDetailRepository;
@@ -46,6 +50,7 @@ public class StockAdjustmentService
         this.warehouseRepository = warehouseRepository;
         this.bookRepository = bookRepository;
         this.stockAdjustmentMapper = stockAdjustmentMapper;
+        this.stockAdjustmentDetailMapper = stockAdjustmentDetailMapper;
         this.stockAdjustmentSpecifications = stockAdjustmentSpecifications;
     }
 
@@ -56,12 +61,21 @@ public class StockAdjustmentService
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByWarehouse(Long warehouseId, Pageable pageable) {
-        return repository.findByWarehouse_Id(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByWarehouseId(warehouseId, pageable).map(stockAdjustmentMapper::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<StockAdjustmentDto> getByBook(Long bookId, Pageable pageable) {
-        return repository.findByDetails_Book(bookId, pageable).map(stockAdjustmentMapper::toDto);
+        return repository.findByBookId(bookId, pageable).map(stockAdjustmentMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<List<StockAdjustmentDetailDto>> getDetails(Long id) {
+        if (!repository.existsById(id)) {
+            return Optional.empty();
+        }
+        return Optional.of(stockAdjustmentDetailMapper
+                .toDtoList(stockAdjustmentDetailRepository.findByStockAdjustmentId(id)));
     }
 
     @Transactional
@@ -91,22 +105,27 @@ public class StockAdjustmentService
         List<StockAdjustmentDetail> entities = new ArrayList<>();
         for (StockAdjustmentDetailRequestDto detail : details) {
             StockAdjustmentDetail entity = new StockAdjustmentDetail();
-            entity.setBook(detail.getBook());
+            entity.setBook(bookRepository.getReferenceById(detail.getBookId()));
             entity.setPhysicalQuantity(detail.getPhysicalQuantity());
             entities.add(entity);
         }
         return entities;
     }
 
+    @SuppressWarnings("null")
     private void prepareDetail(StockAdjustmentDetail detail, StockAdjustment adjustment, Long warehouseId) {
         detail.setStockAdjustment(adjustment);
-        Book book = bookRepository.findById(detail.getBook()).orElse(null);
+        Book book = detail.getBook();
+        if (book == null) {
+            new IllegalArgumentException("El libro no puede ser null");
+        }
         detail.setBookName(book == null ? null : book.getTitle());
-        detail.setSystemQuantity(stockService.totalQuantity(warehouseId, detail.getBook()));
+        detail.setSystemQuantity(stockService.totalQuantity(warehouseId, book.getId()));
     }
 
     private void applyPhysicalQuantities(StockAdjustment adjustment, Long warehouseId) {
-        adjustment.getDetails().forEach(detail -> stockService
-                .setQuantity(warehouseId, detail.getBook(), detail.getPhysicalQuantity()));
+        adjustment.getDetails()
+                .forEach(detail -> stockService.setQuantity(warehouseId, detail.getBook().getId(),
+                        detail.getPhysicalQuantity()));
     }
 }
