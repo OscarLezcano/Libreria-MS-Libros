@@ -20,6 +20,7 @@ public interface StockAdjustmentMapper {
 
     List<StockAdjustmentDto> toDtoList(List<StockAdjustment> stockAdjustments);
 
+    @SuppressWarnings("null")
     default List<Long> toDetailIds(List<StockAdjustmentDetail> details) {
         return details == null ? new ArrayList<>()
                 : details.stream().map(StockAdjustmentDetail::getId).toList();
