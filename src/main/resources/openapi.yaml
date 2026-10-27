@@ -1,0 +1,721 @@
+# cSpell:disable
+openapi: 3.0.3
+info:
+  title: BigoBooks Stock API
+  version: 1.0.0
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      operationId: getBooks
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+    post:
+      tags:
+        - Books
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
+      responses:
+        '201':
+          description: Book created
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+  /books/{id}:
+    get:
+      tags:
+        - Books
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Book found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+        '404':
+          description: Book not found
+    put:
+      tags:
+        - Books
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookRequestDto'
+      responses:
+        '200':
+          description: Book updated
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookResponse'
+        '404':
+          description: Book not found
+    delete:
+      tags:
+        - Books
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Book deleted
+  /books/genre/{genreId}:
+    get:
+      tags:
+        - Books
+      operationId: getBooksByGenre
+      parameters:
+        - name: genreId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+  /books/author/{authorId}:
+    get:
+      tags:
+        - Books
+      operationId: getBooksByAuthor
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/BookListResponse'
+  /genres:
+    get:
+      tags:
+        - Genres
+      operationId: getGenres
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Genres found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreListResponse'
+    post:
+      tags:
+        - Genres
+      operationId: createGenre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
+      responses:
+        '201':
+          description: Genre created
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+  /genres/{id}:
+    get:
+      tags:
+        - Genres
+      operationId: getGenreById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Genre found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+        '404':
+          description: Genre not found
+    put:
+      tags:
+        - Genres
+      operationId: updateGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreRequestDto'
+      responses:
+        '200':
+          description: Genre updated
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/GenreResponse'
+        '404':
+          description: Genre not found
+    delete:
+      tags:
+        - Genres
+      operationId: deleteGenre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Genre deleted
+  /authors:
+    get:
+      tags:
+        - Authors
+      operationId: getAuthors
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Authors found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorListResponse'
+    post:
+      tags:
+        - Authors
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
+      responses:
+        '201':
+          description: Author created
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+  /authors/{id}:
+    get:
+      tags:
+        - Authors
+      operationId: getAuthorById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Author found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+        '404':
+          description: Author not found
+    put:
+      tags:
+        - Authors
+      operationId: updateAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorRequestDto'
+      responses:
+        '200':
+          description: Author updated
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/AuthorResponse'
+        '404':
+          description: Author not found
+    delete:
+      tags:
+        - Authors
+      operationId: deleteAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Author deleted
+  /warehouses:
+    get:
+      tags:
+        - Warehouses
+      operationId: getWarehouses
+      parameters:
+        - name: city
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Warehouses found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseListResponse'
+    post:
+      tags:
+        - Warehouses
+      operationId: createWarehouse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
+      responses:
+        '201':
+          description: Warehouse created
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+  /warehouses/{id}:
+    get:
+      tags:
+        - Warehouses
+      operationId: getWarehouseById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Warehouse found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+        '404':
+          description: Warehouse not found
+    put:
+      tags:
+        - Warehouses
+      operationId: updateWarehouse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseRequestDto'
+      responses:
+        '200':
+          description: Warehouse updated
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/WarehouseResponse'
+        '404':
+          description: Warehouse not found
+    delete:
+      tags:
+        - Warehouses
+      operationId: deleteWarehouse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Warehouse deleted
+  /stocks/warehouse/{warehouseId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStocksByWarehouse
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stocks found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
+  /stocks/book/{bookId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStocksByBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stocks found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockListResponse'
+  /stocks/warehouse/{warehouseId}/book/{bookId}:
+    get:
+      tags:
+        - Stocks
+      operationId: getStock
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
+        '404':
+          description: Stock not found
+    post:
+      tags:
+        - Stocks
+      operationId: setStockQuantity
+      description: Adds quantity to the stock (negative values subtract)
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockQuantityRequestDto'
+      responses:
+        '200':
+          description: Stock set
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockResponse'
+        '404':
+          description: Warehouse not found
+  /stock-adjustments/{id}:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock adjustment found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
+        '404':
+          description: Stock adjustment not found
+  /stock-adjustments/{id}/details:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Stock adjustment details found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentDetailListResponse'
+        '404':
+          description: Stock adjustment not found
+  /stock-adjustments/warehouse/{warehouseId}:
+    get:
+      tags:
+        - StockAdjustments
+      operationId: getStockAdjustmentsByWarehouse
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Stock adjustments found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentListResponse'
+    post:
+      tags:
+        - StockAdjustments
+      operationId: createStockAdjustment
+      parameters:
+        - name: warehouseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentRequestDto'
+      responses:
+        '201':
+          description: Stock adjustment created
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../../common/src/main/resources/openapi.yaml#/components/schemas/StockAdjustmentResponse'
+        '400':
+          description: Invalid stock adjustment

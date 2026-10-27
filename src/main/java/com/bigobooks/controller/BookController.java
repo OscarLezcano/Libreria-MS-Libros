@@ -1,0 +1,81 @@
+package com.bigobooks.controller;
+
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bigobooks.dto.BookDto;
+import com.bigobooks.dto.BookListResponse;
+import com.bigobooks.dto.BookRequestDto;
+import com.bigobooks.dto.BookResponse;
+import com.bigobooks.services.BookService;
+import com.bigobooks.util.Envelopes;
+import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+public class BookController implements BooksApi {
+
+    private final BookService bookService;
+    private final Pageables pageables;
+
+    @Override
+    public ResponseEntity<BookListResponse> getBooks(String title, Integer page, Integer size) {
+        Page<BookDto> result = bookService.search(title, pageables.of(page, size));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
+    }
+
+    @Override
+    public ResponseEntity<BookResponse> getBookById(Long id) {
+        return bookService.getById(id)
+                .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.BOOK, id));
+    }
+
+    @Override
+    public ResponseEntity<BookListResponse> getBooksByGenre(Long genreId, Integer page, Integer size) {
+        Page<BookDto> result = bookService.getByGenre(genreId, pageables.of(page, size));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
+    }
+
+    @Override
+    public ResponseEntity<BookListResponse> getBooksByAuthor(Long authorId, Integer page, Integer size) {
+        Page<BookDto> result = bookService.getByAuthor(authorId,
+                pageables.of(page, size));
+        return ResponseEntity.ok(new BookListResponse()
+                .data(result.getContent())
+                .pagination(Envelopes.pagination(result)));
+    }
+
+    @Override
+    @PreAuthorize("@roles.allows('books-manage')")
+    public ResponseEntity<BookResponse> createBook(BookRequestDto bookRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BookResponse().data(bookService.create(bookRequestDto)));
+    }
+
+    @Override
+    @PreAuthorize("@roles.allows('books-manage')")
+    public ResponseEntity<BookResponse> updateBook(Long id, BookRequestDto bookRequestDto) {
+        return bookService.update(id, bookRequestDto)
+                .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.BOOK, id));
+    }
+
+    @Override
+    @PreAuthorize("@roles.allows('books-manage')")
+    public ResponseEntity<Void> deleteBook(Long id) {
+        bookService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

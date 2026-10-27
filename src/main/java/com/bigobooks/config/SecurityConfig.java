@@ -1,0 +1,46 @@
+package com.bigobooks.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+
+import com.bigobooks.util.security.JwtSecuritySupport;
+
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter,
+			@Value("${security.public-paths}") String[] publicPaths,
+			@Value("${security.public-get-paths}") String[] publicGetPaths)
+			throws Exception {
+		return http
+				.csrf(csrf -> csrf.disable())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(publicPaths).permitAll()
+						.requestMatchers(HttpMethod.GET, publicGetPaths).permitAll()
+						.anyRequest().authenticated())
+				.oauth2ResourceServer(resourceServer -> resourceServer
+						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)))
+				.build();
+	}
+
+	@Bean
+	JwtAuthenticationConverter jwtAuthenticationConverter() {
+		return JwtSecuritySupport.authenticationConverter("role", "ROLE_");
+	}
+
+	@Bean
+	JwtDecoder jwtDecoder(@Value("${jwt.secret}") String secret) {
+		return JwtSecuritySupport.decoder(secret);
+	}
+}

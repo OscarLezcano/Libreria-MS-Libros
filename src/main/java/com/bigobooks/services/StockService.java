@@ -1,0 +1,113 @@
+package com.bigobooks.services;
+
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.bigobooks.dto.StockDto;
+import com.bigobooks.entities.stock.Stock;
+import com.bigobooks.entities.stock.Warehouse;
+import com.bigobooks.mappers.StockMapper;
+import com.bigobooks.repositories.BookRepository;
+import com.bigobooks.repositories.StockRepository;
+import com.bigobooks.repositories.WarehouseRepository;
+import com.bigobooks.specifications.StockSpecifications;
+
+@Service
+public class StockService extends AbstractCrudService<Stock, StockDto, StockRepository> {
+
+    private final WarehouseRepository warehouseRepository;
+    private final BookRepository bookRepository;
+    private final StockMapper stockMapper;
+    private final StockSpecifications stockSpecifications;
+
+    public StockService(StockRepository stockRepository, WarehouseRepository warehouseRepository,
+            BookRepository bookRepository, StockMapper stockMapper, StockSpecifications stockSpecifications) {
+        super(stockRepository);
+        this.warehouseRepository = warehouseRepository;
+        this.bookRepository = bookRepository;
+        this.stockMapper = stockMapper;
+        this.stockSpecifications = stockSpecifications;
+    }
+
+    @Override
+    protected Function<Stock, StockDto> toDtoMapper() {
+        return stockMapper::toDto;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<StockDto> getByWarehouse(Long warehouseId, Pageable pageable) {
+        return repository.findByWarehouseId(warehouseId, pageable).map(stockMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<StockDto> getByBook(Long bookId, Pageable pageable) {
+        return repository.findByBookId(bookId, pageable).map(stockMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<StockDto> getStock(Long warehouseId, Long bookId) {
+        return repository.findByBookIdAndWarehouseId(bookId, warehouseId).map(stockMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public int totalQuantity(Long warehouseId, Long bookId) {
+        return repository.sumQuantityByBookIdAndWarehouseId(bookId, warehouseId);
+    }
+
+    @Transactional
+    public Optional<StockDto> setQuantity(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
+        Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
+        if (warehouse.isEmpty()) {
+            return Optional.empty();
+        }
+        Stock stock = repository.findByBookIdAndWarehouseIdForUpdate(bookId, warehouseId).orElseGet(Stock::new);
+        if (stock.getId() == null) {
+            stock.setBook(bookRepository.getReferenceById(bookId));
+            stock.setWarehouse(warehouse.get());
+        }
+        stock.setQuantity(quantity);
+        return Optional.of(stockMapper.toDto(repository.save(stock)));
+    }
+
+    @Transactional
+    public Optional<StockDto> changeQuantity(Long warehouseId, Long bookId, int delta) {
+        Optional<Warehouse> warehouse = warehouseRepository.findById(warehouseId);
+        if (warehouse.isEmpty()) {
+            return Optional.empty();
+        }
+        Stock stock = repository.findByBookIdAndWarehouseIdForUpdate(bookId, warehouseId).orElseGet(Stock::new);
+        if (stock.getId() == null) {
+            stock.setBook(bookRepository.getReferenceById(bookId));
+            stock.setWarehouse(warehouse.get());
+            stock.setQuantity(0);
+        }
+        stockSpecifications.validateResult(stock.getQuantity(), delta);
+        stock.setQuantity(stock.getQuantity() + delta);
+        return Optional.of(stockMapper.toDto(repository.save(stock)));
+    }
+
+    @Transactional
+    public Optional<StockDto> increase(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
+        return repository.findByBookIdAndWarehouseIdForUpdate(bookId, warehouseId).map(stock -> {
+            stock.setQuantity(stock.getQuantity() + quantity);
+            return stockMapper.toDto(repository.save(stock));
+        });
+    }
+
+    @Transactional
+    public Optional<StockDto> decrease(Long warehouseId, Long bookId, int quantity) {
+        stockSpecifications.validateQuantity(quantity);
+        return repository.findByBookIdAndWarehouseIdForUpdate(bookId, warehouseId).map(stock -> {
+            stockSpecifications.validateResult(stock.getQuantity(), -quantity);
+            stock.setQuantity(stock.getQuantity() - quantity);
+            return stockMapper.toDto(repository.save(stock));
+        });
+    }
+}
