@@ -56,14 +56,14 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('books-manage')")
     public ResponseEntity<BookResponse> createBook(BookRequestDto bookRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BookResponse().data(bookService.create(bookRequestDto)));
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('books-manage')")
     public ResponseEntity<BookResponse> updateBook(Long id, BookRequestDto bookRequestDto) {
         return bookService.update(id, bookRequestDto)
                 .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
@@ -71,7 +71,7 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('books-manage')")
     public ResponseEntity<Void> deleteBook(Long id) {
         bookService.delete(id);
         return ResponseEntity.noContent().build();

@@ -14,7 +14,7 @@ class SecurityConfigTest {
                 .claim("role", "ADMIN")
 				.build();
 
-		var authentication = new SecurityConfig().jwtAuthenticationConverter().convert(jwt);
+		var authentication = new SecurityConfig().jwtAuthenticationConverter("role", "ROLE_").convert(jwt);
 
         assertTrue(authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")));

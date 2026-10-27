@@ -25,7 +25,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
         private final Pageables pageables;
 
         @Override
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("@roles.allows('stock-adjustments-view')")
         public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
                 return stockAdjustmentService.getById(id)
                                 .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
@@ -33,7 +33,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
         }
 
         @Override
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("@roles.allows('stock-adjustments-view')")
         public ResponseEntity<StockAdjustmentDetailListResponse> getStockAdjustmentDetails(Long id) {
                 return stockAdjustmentService.getDetails(id)
                                 .map(details -> ResponseEntity
@@ -42,7 +42,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
         }
 
         @Override
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("@roles.allows('stock-adjustments-view')")
         public ResponseEntity<StockAdjustmentListResponse> getStockAdjustmentsByWarehouse(Long warehouseId,
                         Integer page,
                         Integer size) {
@@ -54,7 +54,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
         }
 
         @Override
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("@roles.allows('stock-adjustments-manage')")
         public ResponseEntity<StockAdjustmentResponse> createStockAdjustment(Long warehouseId,
                         StockAdjustmentRequestDto stockAdjustmentRequestDto) {
                 return stockAdjustmentService.create(warehouseId, stockAdjustmentRequestDto)

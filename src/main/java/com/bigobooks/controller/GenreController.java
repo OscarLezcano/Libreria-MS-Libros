@@ -39,14 +39,14 @@ public class GenreController implements GenresApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('genres-manage')")
     public ResponseEntity<GenreResponse> createGenre(GenreRequestDto genreRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new GenreResponse().data(genreService.create(genreRequestDto)));
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('genres-manage')")
     public ResponseEntity<GenreResponse> updateGenre(Long id, GenreRequestDto genreRequestDto) {
         return genreService.update(id, genreRequestDto)
                 .map(genre -> ResponseEntity.ok(new GenreResponse().data(genre)))
@@ -54,7 +54,7 @@ public class GenreController implements GenresApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('genres-manage')")
     public ResponseEntity<Void> deleteGenre(Long id) {
         genreService.delete(id);
         return ResponseEntity.noContent().build();

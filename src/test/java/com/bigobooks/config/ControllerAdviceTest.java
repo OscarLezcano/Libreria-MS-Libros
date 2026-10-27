@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 
-import com.bigobooks.shared.web.CommonExceptionHandler;
+import com.bigobooks.util.exception.CommonExceptionHandler;
 
 class ControllerAdviceTest {
 

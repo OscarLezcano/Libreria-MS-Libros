@@ -39,14 +39,14 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('authors-manage')")
     public ResponseEntity<AuthorResponse> createAuthor(AuthorRequestDto authorRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new AuthorResponse().data(authorService.create(authorRequestDto)));
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('authors-manage')")
     public ResponseEntity<AuthorResponse> updateAuthor(Long id, AuthorRequestDto authorRequestDto) {
         return authorService.update(id, authorRequestDto)
                 .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
@@ -54,7 +54,7 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@roles.allows('authors-manage')")
     public ResponseEntity<Void> deleteAuthor(Long id) {
         authorService.delete(id);
         return ResponseEntity.noContent().build();
