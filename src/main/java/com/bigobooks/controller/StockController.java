@@ -1,5 +1,7 @@
 package com.bigobooks.controller;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +15,8 @@ import com.bigobooks.services.StockService;
 import com.bigobooks.specifications.StockSpecifications;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +51,8 @@ public class StockController implements StocksApi {
     public ResponseEntity<StockResponse> getStock(Long warehouseId, Long bookId) {
         return stockService.getStock(warehouseId, bookId)
                 .map(stock -> ResponseEntity.ok(new StockResponse().data(stock)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byAttributes(ResourceType.STOCK,
+                        Map.of(ResourceType.BOOK, bookId, ResourceType.WAREHOUSE, warehouseId)));
     }
 
     @Override
@@ -57,6 +62,6 @@ public class StockController implements StocksApi {
         stockSpecifications.validateCreate(stockQuantityRequestDto);
         return stockService.changeQuantity(warehouseId, bookId, stockQuantityRequestDto.getQuantity())
                 .map(stock -> ResponseEntity.ok(new StockResponse().data(stock)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.WAREHOUSE, warehouseId));
     }
 }

@@ -13,6 +13,8 @@ import com.bigobooks.dto.GenreResponse;
 import com.bigobooks.services.GenreService;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +37,7 @@ public class GenreController implements GenresApi {
     public ResponseEntity<GenreResponse> getGenreById(Long id) {
         return genreService.getById(id)
                 .map(genre -> ResponseEntity.ok(new GenreResponse().data(genre)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.GENRE, id));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class GenreController implements GenresApi {
     public ResponseEntity<GenreResponse> updateGenre(Long id, GenreRequestDto genreRequestDto) {
         return genreService.update(id, genreRequestDto)
                 .map(genre -> ResponseEntity.ok(new GenreResponse().data(genre)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.GENRE, id));
     }
 
     @Override

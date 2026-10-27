@@ -14,6 +14,8 @@ import com.bigobooks.dto.StockAdjustmentResponse;
 import com.bigobooks.services.StockAdjustmentService;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +31,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
         public ResponseEntity<StockAdjustmentResponse> getStockAdjustmentById(Long id) {
                 return stockAdjustmentService.getById(id)
                                 .map(adjustment -> ResponseEntity.ok(new StockAdjustmentResponse().data(adjustment)))
-                                .orElseGet(() -> ResponseEntity.notFound().build());
+                                .orElseThrow(() -> NotFoundException.byId(ResourceType.STOCK_ADJUSTMENT, id));
         }
 
         @Override
@@ -38,7 +40,7 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
                 return stockAdjustmentService.getDetails(id)
                                 .map(details -> ResponseEntity
                                                 .ok(new StockAdjustmentDetailListResponse().data(details)))
-                                .orElseGet(() -> ResponseEntity.notFound().build());
+                                .orElseThrow(() -> NotFoundException.byId(ResourceType.STOCK_ADJUSTMENT, id));
         }
 
         @Override
@@ -60,6 +62,6 @@ public class StockAdjustmentController implements StockAdjustmentsApi {
                 return stockAdjustmentService.create(warehouseId, stockAdjustmentRequestDto)
                                 .map(adjustment -> ResponseEntity.status(HttpStatus.CREATED)
                                                 .body(new StockAdjustmentResponse().data(adjustment)))
-                                .orElseGet(() -> ResponseEntity.badRequest().build());
+                                .orElseThrow(() -> NotFoundException.byId(ResourceType.WAREHOUSE, warehouseId));
         }
 }

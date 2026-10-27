@@ -117,7 +117,7 @@ public class StockAdjustmentService
         detail.setStockAdjustment(adjustment);
         Book book = detail.getBook();
         if (book == null) {
-            new IllegalArgumentException("El libro no puede ser null");
+            throw new IllegalArgumentException("El libro no puede ser nulo");
         }
         detail.setBookName(book == null ? null : book.getTitle());
         detail.setSystemQuantity(stockService.totalQuantity(warehouseId, book.getId()));

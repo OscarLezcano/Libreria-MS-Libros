@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bigobooks.entities.BaseEntity;
 import com.bigobooks.repository.BaseRepository;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 public abstract class AbstractCrudService<E extends BaseEntity, D, R extends BaseRepository<E>> {
 
@@ -32,6 +34,9 @@ public abstract class AbstractCrudService<E extends BaseEntity, D, R extends Bas
 
     @Transactional
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw NotFoundException.byId(ResourceType.RESOURCE, id);
+        }
         repository.deleteById(id);
     }
 }

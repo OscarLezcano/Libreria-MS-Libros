@@ -13,6 +13,8 @@ import com.bigobooks.dto.WarehouseResponse;
 import com.bigobooks.services.WarehouseService;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,7 @@ public class WarehouseController implements WarehousesApi {
     public ResponseEntity<WarehouseResponse> getWarehouseById(Long id) {
         return warehouseService.getById(id)
                 .map(warehouse -> ResponseEntity.ok(new WarehouseResponse().data(warehouse)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.WAREHOUSE, id));
     }
 
     @Override
@@ -52,7 +54,7 @@ public class WarehouseController implements WarehousesApi {
     public ResponseEntity<WarehouseResponse> updateWarehouse(Long id, WarehouseRequestDto warehouseRequestDto) {
         return warehouseService.update(id, warehouseRequestDto)
                 .map(warehouse -> ResponseEntity.ok(new WarehouseResponse().data(warehouse)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.WAREHOUSE, id));
     }
 
     @Override

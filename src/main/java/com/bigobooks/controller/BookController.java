@@ -13,6 +13,8 @@ import com.bigobooks.dto.BookResponse;
 import com.bigobooks.services.BookService;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +37,7 @@ public class BookController implements BooksApi {
     public ResponseEntity<BookResponse> getBookById(Long id) {
         return bookService.getById(id)
                 .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.BOOK, id));
     }
 
     @Override
@@ -67,7 +69,7 @@ public class BookController implements BooksApi {
     public ResponseEntity<BookResponse> updateBook(Long id, BookRequestDto bookRequestDto) {
         return bookService.update(id, bookRequestDto)
                 .map(book -> ResponseEntity.ok(new BookResponse().data(book)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.BOOK, id));
     }
 
     @Override

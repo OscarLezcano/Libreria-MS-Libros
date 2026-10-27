@@ -13,6 +13,8 @@ import com.bigobooks.dto.AuthorResponse;
 import com.bigobooks.services.AuthorService;
 import com.bigobooks.util.Envelopes;
 import com.bigobooks.util.Pageables;
+import com.bigobooks.util.exception.NotFoundException;
+import com.bigobooks.util.exception.ResourceType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +37,7 @@ public class AuthorController implements AuthorsApi {
     public ResponseEntity<AuthorResponse> getAuthorById(Long id) {
         return authorService.getById(id)
                 .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.AUTHOR, id));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class AuthorController implements AuthorsApi {
     public ResponseEntity<AuthorResponse> updateAuthor(Long id, AuthorRequestDto authorRequestDto) {
         return authorService.update(id, authorRequestDto)
                 .map(author -> ResponseEntity.ok(new AuthorResponse().data(author)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> NotFoundException.byId(ResourceType.AUTHOR, id));
     }
 
     @Override
