@@ -39,7 +39,6 @@ public interface BookMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "authors", ignore = true)
-    @Mapping(target = "wishlistedBy", ignore = true)
     void update(BookRequestDto dto, @MappingTarget Book book);
 
     default List<Long> toGenreIds(List<BookGenre> genres) {
