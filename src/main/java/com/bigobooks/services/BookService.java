@@ -1,8 +1,10 @@
 package com.bigobooks.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.springframework.cache.Cache;
@@ -130,12 +132,19 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     public Optional<BookDto> update(Long id, BookRequestDto dto) {
         bookSpecifications.validateUpdate(dto);
         return repository.findById(id).map(book -> {
+            List<BookGenre> requestedGenres = dto.getGenreIds() == null
+                    ? null
+                    : resolveGenres(book, dto.getGenreIds());
+            List<BookAuthor> requestedAuthors = dto.getAuthorIds() == null
+                    ? null
+                    : resolveAuthors(book, dto.getAuthorIds());
+
             bookMapper.update(dto, book);
-            if (dto.getGenreIds() != null) {
-                book.setGenres(resolveGenres(book, dto.getGenreIds()));
+            if (requestedGenres != null) {
+                reconcileGenres(book, requestedGenres);
             }
-            if (dto.getAuthorIds() != null) {
-                book.setAuthors(resolveAuthors(book, dto.getAuthorIds()));
+            if (requestedAuthors != null) {
+                reconcileAuthors(book, requestedAuthors);
             }
             return bookMapper.toDto(repository.save(book));
         });
@@ -146,6 +155,70 @@ public class BookService extends AbstractCrudService<Book, BookDto, BookReposito
     @CacheEvict(value = "book", key = "'book_' + #id")
     public void delete(Long id) {
         super.delete(id);
+    }
+
+    private void reconcileGenres(Book book, List<BookGenre> requested) {
+        List<BookGenre> current = book.getGenres();
+        if (current == null) {
+            current = new ArrayList<>();
+            book.setGenres(current);
+        }
+
+        Set<Long> requestedIds = new HashSet<>();
+        for (BookGenre link : requested) {
+            requestedIds.add(link.getGenre().getId());
+        }
+
+        current.removeIf(link -> {
+            boolean removed = !requestedIds.contains(link.getGenre().getId());
+            if (removed) {
+                link.setDeleted(true);
+            }
+            return removed;
+        });
+
+        Set<Long> currentIds = new HashSet<>();
+        for (BookGenre link : current) {
+            currentIds.add(link.getGenre().getId());
+        }
+
+        for (BookGenre link : requested) {
+            if (currentIds.add(link.getGenre().getId())) {
+                current.add(link);
+            }
+        }
+    }
+
+    private void reconcileAuthors(Book book, List<BookAuthor> requested) {
+        List<BookAuthor> current = book.getAuthors();
+        if (current == null) {
+            current = new ArrayList<>();
+            book.setAuthors(current);
+        }
+
+        Set<Long> requestedIds = new HashSet<>();
+        for (BookAuthor link : requested) {
+            requestedIds.add(link.getAuthor().getId());
+        }
+
+        current.removeIf(link -> {
+            boolean removed = !requestedIds.contains(link.getAuthor().getId());
+            if (removed) {
+                link.setDeleted(true);
+            }
+            return removed;
+        });
+
+        Set<Long> currentIds = new HashSet<>();
+        for (BookAuthor link : current) {
+            currentIds.add(link.getAuthor().getId());
+        }
+
+        for (BookAuthor link : requested) {
+            if (currentIds.add(link.getAuthor().getId())) {
+                current.add(link);
+            }
+        }
     }
 
     private List<BookGenre> resolveGenres(Book book, List<Long> genreIds) {
